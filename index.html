@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NordPlan | Internt planeringssystem</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <section id="loginScreen" class="login-screen">
+    <div class="login-shell">
+      <div class="login-copy">
+        <p class="eyebrow">Internt planeringssystem</p>
+        <img
+          class="brand-logo"
+          src="file:///E:/Backup%20Proton/My%20files/Granix/Bilder/Logga/Photoshop%20fil%20loga/Tryck%20f%C3%B6r%20br%C3%B6st%20byxficka.png"
+          alt="Granix"
+        >
+        <p class="hero-copy">
+          Lokal planering med inloggning, projektstyrning, veckonummer och administration av användare samt anställda.
+        </p>
+        <div class="login-hint">
+          <strong>Standardkonto:</strong>
+          <span>Användare: <code>admin</code></span>
+          <span>Lösenord: <code>admin123</code></span>
+        </div>
+      </div>
+
+      <form id="loginForm" class="glass-card login-card">
+        <div class="card-header">
+          <div>
+            <p class="section-label">Säker access</p>
+            <h2>Logga in</h2>
+          </div>
+        </div>
+        <label class="field">
+          <span>Användarnamn</span>
+          <input id="loginUsername" type="text" autocomplete="username" required>
+        </label>
+        <label class="field">
+          <span>Lösenord</span>
+          <input id="loginPassword" type="password" autocomplete="current-password" required>
+        </label>
+        <button class="primary-button" type="submit">Logga in</button>
+        <p id="loginMessage" class="inline-message"></p>
+      </form>
+    </div>
+  </section>
+
+  <main id="appShell" class="app-shell app-hidden">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Internt planeringssystem</p>
+        <img
+          class="brand-logo"
+          src="file:///E:/Backup%20Proton/My%20files/Granix/Bilder/Logga/Photoshop%20fil%20loga/Tryck%20f%C3%B6r%20br%C3%B6st%20byxficka.png"
+          alt="Granix"
+        >
+        <p class="hero-copy">
+          Veckobaserad planering för team, projekt och uppföljning. All data sparas lokalt i din webbläsare.
+        </p>
+      </div>
+      <div class="hero-actions">
+        <div class="session-pill">
+          <span id="sessionUserName">Inloggad</span>
+          <span id="sessionUserRole" class="type-badge">Roll</span>
+        </div>
+        <button id="todayButton" class="secondary-button" type="button">Gå till idag</button>
+        <button id="seedButton" class="ghost-button" type="button">Återställ exempeldata</button>
+        <button id="logoutButton" class="ghost-button" type="button">Logga ut</button>
+      </div>
+    </section>
+
+    <section class="view-switcher">
+      <button id="planningViewButton" class="secondary-button" type="button">Planering</button>
+      <button id="timeViewButton" class="ghost-button" type="button">Tidrapport</button>
+      <button id="diaryViewButton" class="ghost-button" type="button">Dagbok</button>
+    </section>
+
+    <section id="planningView" class="app-view">
+    <section class="dashboard-grid">
+      <article class="glass-card metrics-card">
+        <div class="card-header">
+          <div>
+            <p class="section-label">Översikt</p>
+            <h2>Nyckeltal</h2>
+          </div>
+        </div>
+        <div id="metricsGrid" class="metrics-grid"></div>
+      </article>
+
+      <article class="glass-card filters-card">
+        <div class="card-header">
+          <div>
+            <p class="section-label">Styrning</p>
+            <h2>Filter och arbetslage</h2>
+          </div>
+        </div>
+        <div class="filters-layout">
+          <label class="field">
+            <span>Team</span>
+            <select id="teamFilter"></select>
+          </label>
+          <label class="field">
+            <span>Status</span>
+            <select id="statusFilter">
+              <option value="alla">Alla</option>
+              <option value="planerad">Planerad</option>
+              <option value="pagaende">Pagaende</option>
+              <option value="klar">Klar</option>
+              <option value="forsenad">Forsenad</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Projekt</span>
+            <select id="projectFilter"></select>
+          </label>
+          <label class="field">
+            <span>Sök</span>
+            <input id="searchInput" type="search" placeholder="Titel, ägare, projekt eller anteckning">
+          </label>
+          <button id="clearFiltersButton" class="ghost-button" type="button">Rensa filter</button>
+        </div>
+      </article>
+    </section>
+
+    <section class="workspace-grid">
+      <article class="glass-card planner-card">
+        <div class="card-header planner-header">
+          <div>
+            <p class="section-label">Planering</p>
+            <h2 id="calendarHeading">Kalender</h2>
+          </div>
+          <div class="toolbar-actions">
+            <div class="month-switcher" aria-label="Byt månad">
+              <button id="prevButton" type="button" aria-label="Föregående månad">&larr;</button>
+              <button id="nextButton" type="button" aria-label="Nästa månad">&rarr;</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="calendar-grid" role="grid" aria-label="Kalender med veckonummer">
+          <div class="weekday-heading week-label">V</div>
+          <div class="weekday-heading">Man</div>
+          <div class="weekday-heading">Tis</div>
+          <div class="weekday-heading">Ons</div>
+          <div class="weekday-heading">Tor</div>
+          <div class="weekday-heading">Fre</div>
+          <div class="weekday-heading">Lor</div>
+          <div class="weekday-heading">Son</div>
+        </div>
+      </article>
+
+      <aside class="sidebar-stack">
+        <article class="glass-card form-card">
+          <div class="card-header">
+            <div>
+              <p class="section-label">Aktivitet</p>
+              <h2 id="formTitle">Ny aktivitet</h2>
+            </div>
+          </div>
+
+          <form id="planningForm" class="planning-form">
+            <input id="itemId" type="hidden">
+
+            <label class="field">
+              <span>Titel</span>
+              <input id="titleInput" name="title" type="text" required maxlength="80" placeholder="Exempel: Veckomote salj">
+            </label>
+
+            <div class="field-row">
+              <label class="field">
+                <span>Datum</span>
+                <input id="dateInput" name="date" type="date" required>
+              </label>
+              <label class="field">
+                <span>Projekt</span>
+                <select id="projectInput" name="projectId"></select>
+              </label>
+            </div>
+
+            <div class="field-row">
+              <label class="field">
+                <span>Typ</span>
+                <select id="typeInput" name="type">
+                  <option value="mote">Mote</option>
+                  <option value="uppgift">Uppgift</option>
+                  <option value="leverans">Leverans</option>
+                  <option value="franvaro">Frånvaro</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Status</span>
+                <select id="statusInput" name="status">
+                  <option value="planerad">Planerad</option>
+                  <option value="pagaende">Pagaende</option>
+                  <option value="klar">Klar</option>
+                  <option value="forsenad">Forsenad</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="field-row">
+              <label class="field">
+                <span>Start</span>
+                <input id="startTimeInput" name="startTime" type="time">
+              </label>
+              <label class="field">
+                <span>Slut</span>
+                <input id="endTimeInput" name="endTime" type="time">
+              </label>
+            </div>
+
+            <div class="field-row">
+              <label class="field">
+                <span>Team</span>
+                <select id="teamInput" name="team"></select>
+              </label>
+              <label class="field">
+                <span>Ansvarig</span>
+                <select id="ownerInput" name="owner"></select>
+              </label>
+            </div>
+
+            <div class="field-row">
+              <label class="field">
+                <span>Prioritet</span>
+                <select id="priorityInput" name="priority">
+                  <option value="hog">Hog</option>
+                  <option value="medel">Medel</option>
+                  <option value="lag">Lag</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Skapad av</span>
+                <input id="createdByDisplay" type="text" disabled>
+              </label>
+            </div>
+
+            <label class="field">
+              <span>Anteckning</span>
+              <textarea id="notesInput" name="notes" rows="4" maxlength="220" placeholder="Detaljer, beroenden eller förberedelser"></textarea>
+            </label>
+
+            <div class="form-actions">
+              <button class="primary-button" type="submit">Spara aktivitet</button>
+              <button id="cancelEditButton" class="ghost-button" type="button">Avbryt redigering</button>
+            </div>
+          </form>
+        </article>
+
+        <article class="glass-card detail-card">
+          <div class="card-header">
+            <div>
+              <p class="section-label">Daglig vy</p>
+              <h2 id="selectedDateTitle">Vald dag</h2>
+            </div>
+          </div>
+          <div id="selectedDateMeta" class="selected-date-meta"></div>
+          <div id="selectedDayList" class="selected-day-list"></div>
+        </article>
+      </aside>
+    </section>
+
+    <section class="bottom-grid">
+      <article class="glass-card agenda-card">
+        <div class="card-header">
+          <div>
+            <p class="section-label">Nästa steg</p>
+            <h2>Kommande aktiviteter</h2>
+          </div>
+        </div>
+        <div id="agendaList" class="agenda-list"></div>
+      </article>
+
+      <article class="glass-card team-card">
+        <div class="card-header">
+          <div>
+            <p class="section-label">Projekt</p>
+            <h2>Projekt och tidslinjer</h2>
+          </div>
+        </div>
+        <div id="projectSummary" class="team-summary"></div>
+      </article>
+    </section>
+    <section class="admin-grid">
+      <article class="glass-card admin-card">
+        <div class="card-header">
+          <div>
+            <p class="section-label">Projektregister</p>
+            <h2>Lägg till projekt</h2>
+          </div>
+        </div>
+        <form id="projectForm" class="planning-form">
+          <input id="projectIdInput" type="hidden">
+          <label class="field">
+            <span>Projektnamn</span>
+            <input id="projectNameInput" type="text" required maxlength="80" placeholder="Exempel: CRM migrering">
+          </label>
+          <div class="field-row">
+            <label class="field">
+              <span>Startdatum</span>
+              <input id="projectStartInput" type="date" required>
+            </label>
+            <label class="field">
+              <span>Slutdatum</span>
+              <input id="projectEndInput" type="date" required>
+            </label>
+          </div>
+          <div class="field-row">
+            <label class="field">
+              <span>Team</span>
+              <select id="projectTeamInput"></select>
+            </label>
+            <label class="field">
+              <span>Projektägare</span>
+              <select id="projectOwnerInput"></select>
+            </label>
+          </div>
+          <div class="field-row">
+            <label class="field">
+              <span>Status</span>
+              <select id="projectStatusInput">
+                <option value="planerad">Planerad</option>
+                <option value="pagaende">Pagaende</option>
+                <option value="klar">Klar</option>
+                <option value="forsenad">Forsenad</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Budgetstatus</span>
+              <select id="projectBudgetInput">
+                <option value="gron">Gron</option>
+                <option value="gul">Gul</option>
+                <option value="rod">Rod</option>
+              </select>
+            </label>
+          </div>
+          <label class="field">
+            <span>Projektfarg</span>
+            <select id="projectColorInput">
+              <option value="#0f766e">Grön</option>
+              <option value="#2563eb">Blå</option>
+              <option value="#f59e0b">Orange</option>
+              <option value="#dc2626">Röd</option>
+              <option value="#7c3aed">Lila</option>
+              <option value="#db2777">Rosa</option>
+              <option value="#0891b2">Turkos</option>
+              <option value="#4f46e5">Indigo</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Beskrivning</span>
+            <textarea id="projectNotesInput" rows="3" maxlength="220" placeholder="Malsattning, scope och viktiga beroenden"></textarea>
+          </label>
+          <div class="form-actions">
+            <button class="primary-button" type="submit">Spara projekt</button>
+            <button id="cancelProjectEditButton" class="ghost-button" type="button">Avbryt redigering</button>
+          </div>
+        </form>
+      </article>
+
+      <article id="adminSection" class="glass-card admin-card">
+        <div class="card-header">
+          <div>
+            <p class="section-label">Administration</p>
+            <h2>Användare och anställda</h2>
+          </div>
+        </div>
+
+        <div class="admin-stack">
+          <form id="employeeForm" class="planning-form">
+            <h3 class="subsection-title">Ny anställd</h3>
+            <div class="field-row">
+              <label class="field">
+                <span>Namn</span>
+                <input id="employeeNameInput" type="text" required maxlength="80">
+              </label>
+              <label class="field">
+                <span>Team</span>
+                <select id="employeeTeamInput"></select>
+              </label>
+            </div>
+            <div class="field-row">
+              <label class="field">
+                <span>Titel</span>
+                <select id="employeeTitleInput" required>
+                  <option value="Ledning">Ledning</option>
+                  <option value="Stensattare">Stensattare</option>
+                  <option value="Hantlangare">Hantlangare</option>
+                  <option value="Stenhuggare">Stenhuggare</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>E-post</span>
+                <input id="employeeEmailInput" type="email" maxlength="120" placeholder="namn@bolag.se">
+              </label>
+            </div>
+            <button class="secondary-button" type="submit">Lägg till anställd</button>
+          </form>
+          <p id="adminMessage" class="inline-message"></p>
+
+          <form id="userForm" class="planning-form">
+            <h3 class="subsection-title">Nytt användarkonto</h3>
+            <div class="field-row">
+              <label class="field">
+                <span>Användarnamn</span>
+                <input id="userUsernameInput" type="text" required maxlength="40">
+              </label>
+              <label class="field">
+                <span>Lösenord</span>
+                <input id="userPasswordInput" type="password" required maxlength="60">
+              </label>
+            </div>
+            <div class="field-row">
+              <label class="field">
+                <span>Roll</span>
+                <select id="userRoleInput">
+                  <option value="admin">Admin</option>
+                  <option value="stenarbetare">Stenarbetare</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Befintlig anställd</span>
+                <select id="userEmployeeInput"></select>
+              </label>
+            </div>
+            <p class="muted-copy">Om ingen anställd väljs skapas en ny anställd automatiskt för användaren.</p>
+            <button class="secondary-button" type="submit">Lägg till användare</button>
+          </form>
+
+          <div class="directory-grid">
+            <div>
+              <h3 class="subsection-title">Anstallda</h3>
+              <div id="employeeDirectory" class="directory-list"></div>
+            </div>
+            <div>
+              <h3 class="subsection-title">Användarkonton</h3>
+              <div id="userDirectory" class="directory-list"></div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+    </section>
+
+    <section id="timeView" class="app-view app-hidden">
+      <section class="time-grid">
+        <article class="glass-card time-card">
+          <div class="card-header">
+            <div>
+              <p class="section-label">Tidrapportering</p>
+              <h2 id="timeFormTitle">Ny tidrapport</h2>
+            </div>
+          </div>
+          <form id="timeReportForm" class="planning-form">
+            <input id="timeEntryId" type="hidden">
+            <div class="field-row">
+              <label class="field">
+                <span>Datum</span>
+                <input id="timeDateInput" type="date" required>
+              </label>
+              <label class="field">
+                <span>Projekt</span>
+                <select id="timeProjectInput" required></select>
+              </label>
+            </div>
+          <div class="field-row">
+            <label class="field">
+              <span>Timmar</span>
+              <input id="timeHoursInput" type="number" min="0.5" max="24" step="0.5" required>
+            </label>
+          </div>
+          <div class="field-row">
+            <label class="field">
+              <span>Restid inom arbetstid</span>
+              <input id="timeTravelWithinInput" type="number" min="0" max="24" step="0.5" value="0">
+            </label>
+            <label class="field">
+              <span>Restid utanför arbetstid</span>
+              <input id="timeTravelOutsideInput" type="number" min="0" max="24" step="0.5" value="0">
+            </label>
+          </div>
+          <label class="field">
+            <span>Traktamente</span>
+            <select id="timeAllowanceInput">
+              <option value="nej">Nej</option>
+              <option value="halv">Halvt</option>
+              <option value="hel">Helt</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Kommentar</span>
+            <textarea id="timeNotesInput" rows="3" maxlength="220" required placeholder="Beskriv vilket jobb som utförts under dagen"></textarea>
+          </label>
+          <label class="field">
+            <span>Bilder</span>
+            <input id="timeImagesInput" type="file" accept="image/*" multiple>
+            <small class="field-help">Lägg till en eller flera bilder som visar jobbet som utförts.</small>
+          </label>
+          <div id="timeImagePreview" class="time-image-preview"></div>
+            <div class="form-actions">
+              <button class="primary-button" type="submit">Spara tidrapport</button>
+              <button id="cancelTimeEditButton" class="ghost-button" type="button">Avbryt redigering</button>
+            </div>
+          </form>
+          <div class="card-header time-subheader">
+            <div>
+              <p class="section-label">Mina timmar</p>
+              <h2>Rapporterad tid</h2>
+            </div>
+          </div>
+          <div id="myTimeReportList" class="selected-day-list"></div>
+        </article>
+
+        <article id="timeAdminSection" class="glass-card time-card">
+          <div class="card-header">
+            <div>
+              <p class="section-label">Adminvy</p>
+              <h2>Alla tidrapporter</h2>
+            </div>
+            <div class="toolbar-actions">
+              <button id="exportTimeDayPdfButton" class="ghost-button" type="button">Ladda ned dag</button>
+              <button id="exportTimeRangePdfButton" class="secondary-button" type="button">Ladda ned intervall</button>
+            </div>
+          </div>
+          <div class="filters-layout time-filters">
+            <label class="field">
+              <span>Vald dag</span>
+              <input id="timeFilterDayInput" type="date">
+            </label>
+            <label class="field">
+              <span>Från datum</span>
+              <input id="timeFilterFromInput" type="date">
+            </label>
+            <label class="field">
+              <span>Till datum</span>
+              <input id="timeFilterToInput" type="date">
+            </label>
+            <label class="field">
+              <span>Anstalld</span>
+              <select id="timeEmployeeFilter"></select>
+            </label>
+          </div>
+          <div id="timeSummary" class="team-summary"></div>
+          <div id="allTimeReportList" class="selected-day-list"></div>
+        </article>
+      </section>
+    </section>
+
+    <section id="diaryView" class="app-view app-hidden">
+      <section class="time-grid">
+        <article class="glass-card time-card">
+          <div class="card-header">
+            <div>
+              <p class="section-label">Dagbok</p>
+              <h2 id="diaryFormTitle">Nytt dagboksinlägg</h2>
+            </div>
+          </div>
+          <form id="diaryForm" class="planning-form">
+            <input id="diaryEntryId" type="hidden">
+            <label class="field">
+              <span>Anstalld</span>
+              <input id="diaryEmployeeDisplay" type="text" disabled>
+            </label>
+            <div class="field-row">
+              <label class="field">
+                <span>Datum</span>
+                <input id="diaryDateInput" type="date" required>
+              </label>
+              <label class="field">
+                <span>Projekt</span>
+                <select id="diaryProjectInput" required></select>
+              </label>
+            </div>
+            <label class="field">
+              <span>Vad händer idag</span>
+              <textarea id="diaryHappenedInput" rows="3" maxlength="400" required placeholder="Beskriv vad som händer under dagen"></textarea>
+            </label>
+            <label class="field">
+              <span>Vad är utfört</span>
+              <textarea id="diaryCompletedInput" rows="3" maxlength="400" required placeholder="Beskriv vad som blivit klart"></textarea>
+            </label>
+            <label class="field">
+              <span>Extra arbete eller avvikelser</span>
+              <textarea id="diaryExtraInput" rows="3" maxlength="300" placeholder="Skriv om något extra utförts eller om något avvikit"></textarea>
+            </label>
+            <label class="field">
+              <span>Skapad av</span>
+              <input id="diaryCreatedByDisplay" type="text" disabled>
+            </label>
+            <div class="form-actions">
+              <button class="primary-button" type="submit">Spara dagbok</button>
+              <button id="cancelDiaryEditButton" class="ghost-button" type="button">Avbryt redigering</button>
+            </div>
+          </form>
+          <div class="card-header time-subheader">
+            <div>
+              <p class="section-label">Mina inlägg</p>
+              <h2>Dagliga rapporter</h2>
+            </div>
+          </div>
+          <div id="myDiaryList" class="selected-day-list"></div>
+        </article>
+
+        <article id="diaryAdminSection" class="glass-card time-card">
+          <div class="card-header">
+            <div>
+              <p class="section-label">Adminvy</p>
+              <h2>Alla dagboksinlägg</h2>
+            </div>
+            <div class="toolbar-actions">
+              <button id="exportDiaryDayPdfButton" class="ghost-button" type="button">Ladda ned dag</button>
+              <button id="exportDiaryRangePdfButton" class="secondary-button" type="button">Ladda ned intervall</button>
+            </div>
+          </div>
+          <div class="filters-layout time-filters">
+            <label class="field">
+              <span>Vald dag</span>
+              <input id="diaryFilterDayInput" type="date">
+            </label>
+            <label class="field">
+              <span>Från datum</span>
+              <input id="diaryFilterFromInput" type="date">
+            </label>
+            <label class="field">
+              <span>Till datum</span>
+              <input id="diaryFilterToInput" type="date">
+            </label>
+            <label class="field">
+              <span>Anstalld</span>
+              <select id="diaryEmployeeFilter"></select>
+            </label>
+          </div>
+          <div id="allDiaryList" class="selected-day-list"></div>
+        </article>
+      </section>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(0, 175, 65, 0.28), transparent 34rem),
+    linear-gradient(135deg, #020403 0%, #07100b 48%, #020403 100%);
+  color: #ffffff;
+  min-height: 100vh;
+}
+
+.fc {
+  --fc-border-color: rgba(255, 255, 255, 0.12);
+  --fc-page-bg-color: transparent;
+  --fc-neutral-bg-color: rgba(255, 255, 255, 0.04);
+  --fc-today-bg-color: rgba(0, 175, 65, 0.18);
+  color: #ffffff;
+}
+
+.fc .fc-toolbar-title {
+  font-size: clamp(1.25rem, 3vw, 2rem);
+  font-weight: 800;
+}
+
+.fc .fc-button {
+  background: rgba(0, 175, 65, 0.18);
+  border: 1px solid rgba(0, 175, 65, 0.35);
+  color: #ffffff;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button-primary:not(:disabled):active,
+.fc .fc-button-primary:hover {
+  background: #00af41;
+  border-color: #00af41;
+}
+
+.fc .fc-daygrid-day-number,
+.fc .fc-col-header-cell-cushion {
+  color: #ffffff;
+}
+
+.fc .fc-daygrid-week-number {
+  background: #00af41;
+  color: #001807;
+  font-weight: 900;
+  padding: 0.25rem 0.4rem;
+  border-radius: 999px;
+}
+
+.fc-event {
+  border: 0;
+  border-radius: 0.65rem;
+  padding: 0.15rem 0.35rem;
+  font-weight: 700;
+}
+
+@media (max-width: 720px) {
+  .fc .fc-toolbar {
+    align-items: stretch;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .fc .fc-toolbar-chunk {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
