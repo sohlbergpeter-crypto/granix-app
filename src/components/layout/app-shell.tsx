@@ -12,37 +12,40 @@ export function AppShell({
 }) {
   return (
     <div className="min-h-screen">
-      <header className="sticky top-0 z-30 border-b border-white/10 bg-black/70 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
-          <Link href="/dashboard" className="flex items-center gap-3">
-            <span className="grid h-11 w-11 place-items-center rounded-2xl bg-granix-green text-2xl font-black text-black">G</span>
-            <span>
-              <span className="block text-lg font-black leading-none">GRANIX</span>
-              <span className="text-xs font-semibold uppercase tracking-[0.25em] text-granix-green">Planering</span>
-            </span>
-          </Link>
-          <nav className="hidden items-center gap-2 md:flex">
-            <Link className="rounded-xl px-3 py-2 text-sm font-bold text-white/80 hover:bg-white/10" href="/dashboard">Dashboard</Link>
-            <Link className="rounded-xl px-3 py-2 text-sm font-bold text-white/80 hover:bg-white/10" href="/projects">Projekt</Link>
-            {user.role === "admin" && <Link className="rounded-xl px-3 py-2 text-sm font-bold text-white/80 hover:bg-white/10" href="/admin">Admin</Link>}
-          </nav>
-          <div className="flex items-center gap-2">
-            <span className="hidden text-right text-sm sm:block">
-              <span className="block font-bold">{user.username}</span>
-              <span className="text-white/50">{user.role}</span>
-            </span>
+      <main className="mx-auto w-[min(1440px,calc(100%-2rem))] py-8">
+        <section className="mb-4 flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
+          <div>
+            <p className="eyebrow">Internt planeringssystem</p>
+            <Link href="/dashboard" className="brand-wordmark">
+              <span className="brand-mark">G</span>
+              <span>
+                <span className="block text-5xl font-black leading-none tracking-tight text-[#1b2b31]">GRANIX</span>
+                <span className="mt-2 block text-sm font-bold uppercase tracking-[0.2em] text-[#115e59]">Planering</span>
+              </span>
+            </Link>
+            <p className="hero-copy">
+              Veckobaserad planering för team, projekt och uppföljning. All data sparas i den riktiga databasen bakom appen.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="grid gap-1 rounded-full border border-[rgba(27,43,49,0.1)] bg-[rgba(255,255,255,0.78)] px-4 py-3 text-sm">
+              <span className="font-bold text-[#1b2b31]">{user.username}</span>
+              <span className="text-[#59707a]">{user.role}</span>
+            </div>
             <form action={logoutAction}>
-              <Button variant="secondary" type="submit">Logga ut</Button>
+              <Button variant="ghost" type="submit">Logga ut</Button>
             </form>
           </div>
-        </div>
-        <nav className="grid grid-cols-3 border-t border-white/10 md:hidden">
-          <Link className="px-3 py-3 text-center text-sm font-bold text-white/80" href="/dashboard">Dashboard</Link>
-          <Link className="px-3 py-3 text-center text-sm font-bold text-white/80" href="/projects">Projekt</Link>
-          <Link className="px-3 py-3 text-center text-sm font-bold text-white/80" href={user.role === "admin" ? "/admin" : "/dashboard"}>Admin</Link>
-        </nav>
-      </header>
-      <main className="mx-auto max-w-7xl px-4 py-6">{children}</main>
+        </section>
+
+        <section className="mb-4 flex flex-wrap gap-3">
+          <Link href="/dashboard"><Button variant="secondary" type="button">Planering</Button></Link>
+          <Link href="/projects"><Button variant="ghost" type="button">Projekt</Button></Link>
+          {user.role === "admin" && <Link href="/admin"><Button variant="ghost" type="button">Administration</Button></Link>}
+        </section>
+
+        {children}
+      </main>
     </div>
   );
 }

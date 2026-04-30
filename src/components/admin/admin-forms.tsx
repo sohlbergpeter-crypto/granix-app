@@ -17,8 +17,8 @@ type Option = { id: string; name: string };
 
 function Message({ state }: { state: { error?: string; ok?: boolean } | null }) {
   if (!state) return null;
-  if (state.error) return <p className="rounded-xl border border-red-400/40 bg-red-500/10 p-3 text-sm text-red-100">{state.error}</p>;
-  if (state.ok) return <p className="rounded-xl border border-granix-green/40 bg-granix-green/10 p-3 text-sm text-green-100">Sparat.</p>;
+  if (state.error) return <p className="rounded-[20px] border border-[rgba(185,28,28,0.18)] bg-[rgba(239,68,68,0.08)] p-3 text-sm text-[#b91c1c]">{state.error}</p>;
+  if (state.ok) return <p className="rounded-[20px] border border-[rgba(15,118,110,0.18)] bg-[rgba(15,118,110,0.08)] p-3 text-sm text-[#115e59]">Sparat.</p>;
   return null;
 }
 
@@ -30,87 +30,111 @@ export function AdminForms({ teams, employees }: { teams: Option[]; employees: O
   const [vehicleState, vehicleAction] = useActionState(createVehicleAction, null);
 
   return (
-    <div className="grid gap-5 xl:grid-cols-2">
+    <div className="grid gap-4 xl:grid-cols-2">
       <Card>
-        <CardTitle>Skapa användare</CardTitle>
-        <form action={userAction} className="mt-4 grid gap-3">
+        <div className="mb-4">
+          <p className="eyebrow">Administration</p>
+          <CardTitle>Nytt användarkonto</CardTitle>
+        </div>
+        <form action={userAction} className="grid gap-3">
           <Field label="Användarnamn"><Input name="username" required /></Field>
           <Field label="E-post"><Input name="email" type="email" /></Field>
           <Field label="Lösenord"><Input name="password" type="password" minLength={6} required /></Field>
-          <Field label="Roll">
-            <Select name="role" defaultValue={Role.user}>
-              <option value={Role.user}>User</option>
-              <option value={Role.admin}>Admin</option>
-            </Select>
-          </Field>
-          <Field label="Koppla anställd">
-            <Select name="employeeId" defaultValue="">
-              <option value="">Ingen koppling</option>
-              {employees.map((employee) => <option key={employee.id} value={employee.id}>{employee.name}</option>)}
-            </Select>
-          </Field>
+          <div className="grid gap-3 md:grid-cols-2">
+            <Field label="Roll">
+              <Select name="role" defaultValue={Role.user}>
+                <option value={Role.user}>User</option>
+                <option value={Role.admin}>Admin</option>
+              </Select>
+            </Field>
+            <Field label="Befintlig anställd">
+              <Select name="employeeId" defaultValue="">
+                <option value="">Ingen koppling</option>
+                {employees.map((employee) => <option key={employee.id} value={employee.id}>{employee.name}</option>)}
+              </Select>
+            </Field>
+          </div>
+          <p className="text-sm text-[#59707a]">Om ingen anställd väljs skapas en ny anställd automatiskt för användaren.</p>
           <Message state={userState} />
-          <Button type="submit">Skapa användare</Button>
+          <Button variant="secondary" type="submit">Lägg till användare</Button>
         </form>
       </Card>
 
       <Card>
-        <CardTitle>Skapa anställd</CardTitle>
-        <form action={employeeAction} className="mt-4 grid gap-3">
+        <div className="mb-4">
+          <p className="eyebrow">Administration</p>
+          <CardTitle>Ny anställd</CardTitle>
+        </div>
+        <form action={employeeAction} className="grid gap-3">
           <Field label="Namn"><Input name="name" required /></Field>
-          <Field label="Telefon"><Input name="phone" /></Field>
-          <Field label="E-post"><Input name="email" type="email" /></Field>
-          <Field label="Roll/titel"><Input name="title" placeholder="Stensättare" required /></Field>
-          <Field label="Arbetslag">
-            <Select name="teamId" defaultValue="">
-              <option value="">Inget arbetslag</option>
-              {teams.map((team) => <option key={team.id} value={team.id}>{team.name}</option>)}
-            </Select>
-          </Field>
+          <div className="grid gap-3 md:grid-cols-2">
+            <Field label="Telefon"><Input name="phone" /></Field>
+            <Field label="E-post"><Input name="email" type="email" /></Field>
+          </div>
+          <div className="grid gap-3 md:grid-cols-2">
+            <Field label="Roll/titel"><Input name="title" placeholder="Stensättare" required /></Field>
+            <Field label="Arbetslag">
+              <Select name="teamId" defaultValue="">
+                <option value="">Inget arbetslag</option>
+                {teams.map((team) => <option key={team.id} value={team.id}>{team.name}</option>)}
+              </Select>
+            </Field>
+          </div>
           <Field label="Kompetenser, kommaseparerade"><Input name="skills" placeholder="Marksten, kantsten, grävare" /></Field>
           <Message state={employeeState} />
-          <Button type="submit">Skapa anställd</Button>
+          <Button variant="secondary" type="submit">Lägg till anställd</Button>
         </form>
       </Card>
 
       <Card>
-        <CardTitle>Skapa arbetslag</CardTitle>
-        <form action={teamAction} className="mt-4 grid gap-3">
+        <div className="mb-4">
+          <p className="eyebrow">Administration</p>
+          <CardTitle>Nytt arbetslag</CardTitle>
+        </div>
+        <form action={teamAction} className="grid gap-3">
           <Field label="Namn"><Input name="name" required /></Field>
           <Field label="Beskrivning"><Textarea name="description" /></Field>
           <Message state={teamState} />
-          <Button type="submit">Skapa team</Button>
+          <Button variant="ghost" type="submit">Spara team</Button>
         </form>
       </Card>
 
       <Card>
-        <CardTitle>Skapa maskin</CardTitle>
-        <form action={machineAction} className="mt-4 grid gap-3">
-          <Field label="Namn"><Input name="name" required /></Field>
-          <Field label="Typ"><Input name="type" required /></Field>
-          <Field label="Status">
-            <Select name="status" defaultValue={ResourceStatus.aktiv}>
-              {Object.values(ResourceStatus).map((status) => <option key={status} value={status}>{status}</option>)}
-            </Select>
-          </Field>
-          <Message state={machineState} />
-          <Button type="submit">Skapa maskin</Button>
-        </form>
-      </Card>
+        <div className="mb-4">
+          <p className="eyebrow">Administration</p>
+          <CardTitle>Resurser</CardTitle>
+        </div>
+        <div className="grid gap-5">
+          <form action={machineAction} className="grid gap-3">
+            <h3 className="text-base font-bold text-[#1b2b31]">Ny maskin</h3>
+            <div className="grid gap-3 md:grid-cols-2">
+              <Field label="Namn"><Input name="name" required /></Field>
+              <Field label="Typ"><Input name="type" required /></Field>
+            </div>
+            <Field label="Status">
+              <Select name="status" defaultValue={ResourceStatus.aktiv}>
+                {Object.values(ResourceStatus).map((status) => <option key={status} value={status}>{status}</option>)}
+              </Select>
+            </Field>
+            <Message state={machineState} />
+            <Button variant="ghost" type="submit">Spara maskin</Button>
+          </form>
 
-      <Card>
-        <CardTitle>Skapa fordon</CardTitle>
-        <form action={vehicleAction} className="mt-4 grid gap-3">
-          <Field label="Namn"><Input name="name" required /></Field>
-          <Field label="Registreringsnummer"><Input name="registrationNumber" required /></Field>
-          <Field label="Status">
-            <Select name="status" defaultValue={ResourceStatus.aktiv}>
-              {Object.values(ResourceStatus).map((status) => <option key={status} value={status}>{status}</option>)}
-            </Select>
-          </Field>
-          <Message state={vehicleState} />
-          <Button type="submit">Skapa fordon</Button>
-        </form>
+          <form action={vehicleAction} className="grid gap-3">
+            <h3 className="text-base font-bold text-[#1b2b31]">Nytt fordon</h3>
+            <div className="grid gap-3 md:grid-cols-2">
+              <Field label="Namn"><Input name="name" required /></Field>
+              <Field label="Registreringsnummer"><Input name="registrationNumber" required /></Field>
+            </div>
+            <Field label="Status">
+              <Select name="status" defaultValue={ResourceStatus.aktiv}>
+                {Object.values(ResourceStatus).map((status) => <option key={status} value={status}>{status}</option>)}
+              </Select>
+            </Field>
+            <Message state={vehicleState} />
+            <Button variant="ghost" type="submit">Spara fordon</Button>
+          </form>
+        </div>
       </Card>
     </div>
   );

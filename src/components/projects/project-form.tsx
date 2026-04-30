@@ -51,40 +51,61 @@ export function ProjectForm({ project, teams, employees, machines, vehicles }: P
   const selectedVehicles = new Set(project?.vehicles.map((vehicle) => vehicle.vehicleId));
 
   return (
-    <Card>
-      <CardTitle>{project ? "Redigera projekt" : "Skapa projekt"}</CardTitle>
-      <form action={action} className="mt-5 grid gap-5">
+    <Card className="p-5">
+      <div className="mb-4">
+        <p className="eyebrow">Projektregister</p>
+        <CardTitle>{project ? "Redigera projekt" : "Lägg till projekt"}</CardTitle>
+      </div>
+      <form action={action} className="grid gap-4">
         <input type="hidden" name="id" value={project?.id || ""} />
+        <Field label="Projektnamn"><Input name="name" defaultValue={project?.name} required /></Field>
+
         <div className="grid gap-4 md:grid-cols-2">
-          <Field label="Projektnamn"><Input name="name" defaultValue={project?.name} required /></Field>
           <Field label="Projektnummer"><Input name="projectNumber" defaultValue={project?.projectNumber} required /></Field>
           <Field label="Kundnamn"><Input name="customerName" defaultValue={project?.customerName} required /></Field>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
           <Field label="Adress"><Input name="address" defaultValue={project?.address} required /></Field>
           <Field label="Ort"><Input name="city" defaultValue={project?.city} required /></Field>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
           <Field label="Kontaktperson"><Input name="contactPerson" defaultValue={project?.contactPerson || ""} /></Field>
           <Field label="Telefon"><Input name="phone" defaultValue={project?.phone || ""} /></Field>
-          <Field label="Färgkod"><Input name="color" type="color" defaultValue={project?.color || "#00af41"} /></Field>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
           <Field label="Startdatum"><Input name="startDate" type="date" defaultValue={dateValue(project?.startDate)} required /></Field>
           <Field label="Slutdatum"><Input name="endDate" type="date" defaultValue={dateValue(project?.endDate)} required /></Field>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
           <Field label="Starttid"><Input name="startTime" type="time" defaultValue={project?.startTime || ""} /></Field>
           <Field label="Sluttid"><Input name="endTime" type="time" defaultValue={project?.endTime || ""} /></Field>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
           <Field label="Status">
             <Select name="status" defaultValue={project?.status || "planerat"}>
               {Object.values(ProjectStatus).map((status) => <option key={status} value={status}>{status}</option>)}
             </Select>
           </Field>
+          <Field label="Projektfärg"><Input name="color" type="color" defaultValue={project?.color || "#0f766e"} /></Field>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
           <Field label="Arbetslag">
             <Select name="teamId" defaultValue={project?.teamId || ""}>
               <option value="">Inget arbetslag</option>
               {teams.map((team) => <option key={team.id} value={team.id}>{team.name}</option>)}
             </Select>
           </Field>
+          <label className="flex items-center gap-3 rounded-[20px] border border-[rgba(27,43,49,0.12)] bg-[rgba(255,255,255,0.96)] px-4 py-3 text-sm font-bold text-[#1b2b31]">
+            <input name="allDay" type="checkbox" defaultChecked={project?.allDay ?? true} />
+            Heldagsprojekt
+          </label>
         </div>
-
-        <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/20 p-3 text-sm font-bold">
-          <input name="allDay" type="checkbox" defaultChecked={project?.allDay ?? true} />
-          Heldagsprojekt
-        </label>
 
         <div className="grid gap-4 md:grid-cols-3">
           <Field label="Anställda">
@@ -104,10 +125,8 @@ export function ProjectForm({ project, teams, employees, machines, vehicles }: P
           </Field>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          <Field label="Intern anteckning"><Textarea name="internalNote" defaultValue={project?.internalNote || ""} /></Field>
-          <Field label="Extern beskrivning"><Textarea name="externalDescription" defaultValue={project?.externalDescription || ""} /></Field>
-        </div>
+        <Field label="Intern anteckning"><Textarea name="internalNote" defaultValue={project?.internalNote || ""} /></Field>
+        <Field label="Extern beskrivning"><Textarea name="externalDescription" defaultValue={project?.externalDescription || ""} /></Field>
 
         <Field label="Notis vid sparning">
           <Select name="notificationTarget" defaultValue="none">
@@ -117,8 +136,10 @@ export function ProjectForm({ project, teams, employees, machines, vehicles }: P
           </Select>
         </Field>
 
-        {state?.error && <p className="rounded-xl border border-red-400/40 bg-red-500/10 p-3 text-sm text-red-100">{state.error}</p>}
-        <Button type="submit" disabled={pending}>{pending ? "Sparar..." : "Spara projekt"}</Button>
+        {state?.error && <p className="rounded-[20px] border border-[rgba(185,28,28,0.18)] bg-[rgba(239,68,68,0.08)] p-3 text-sm text-[#b91c1c]">{state.error}</p>}
+        <div className="flex flex-wrap gap-3">
+          <Button type="submit" disabled={pending}>{pending ? "Sparar..." : "Spara projekt"}</Button>
+        </div>
       </form>
     </Card>
   );
