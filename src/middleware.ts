@@ -4,12 +4,22 @@ import { stripBasePath, withBasePath } from "@/lib/base-path";
 
 const protectedRoutes = ["/dashboard", "/projects", "/admin", "/files", "/time-reports", "/diary"];
 const adminRoutes = ["/admin", "/projects/new"];
+const canonicalHost = "app.granix.se";
+const vercelProductionHost = "granix-app.vercel.app";
 
 function secret() {
   return new TextEncoder().encode(process.env.SESSION_SECRET || "lokal-utveckling-byt-denna-hemlighet-minst-32-tecken");
 }
 
 export async function middleware(request: NextRequest) {
+  const host = request.headers.get("host")?.toLowerCase();
+  if (process.env.NODE_ENV === "production" && host === vercelProductionHost) {
+    const redirectUrl = new URL(request.url);
+    redirectUrl.protocol = "https:";
+    redirectUrl.host = canonicalHost;
+    return NextResponse.redirect(redirectUrl, 308);
+  }
+
   const pathname = stripBasePath(request.nextUrl.pathname);
   const isProtected = protectedRoutes.some((route) => pathname.startsWith(route));
   if (!isProtected) return NextResponse.next();
