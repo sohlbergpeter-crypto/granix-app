@@ -83,7 +83,7 @@ export const employeeSchema = z.object({
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ["id06Date"],
-      message: "Välj utbildningsdatum för ID06.",
+      message: "Välj datum då ID06 börjar gälla.",
     });
   }
   if (data.hasId06 && !data.id06ExpiryDate) {

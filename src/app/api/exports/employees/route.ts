@@ -63,12 +63,16 @@ export async function GET() {
         `APV: utbildningsdatum ${formatDate(employee.apvDate)}${employee.apvExpiryDate ? `, förfaller ${formatDate(employee.apvExpiryDate)}` : ""}`,
         10,
       );
+    } else if (employee.skills.includes("APV")) {
+      drawLine("APV", 10);
     }
     if (employee.id06Date) {
       drawLine(
-        `ID06: utbildningsdatum ${formatDate(employee.id06Date)}${employee.id06ExpiryDate ? `, förfaller ${formatDate(employee.id06ExpiryDate)}` : ""}`,
+        `ID06: giltig från ${formatDate(employee.id06Date)}${employee.id06ExpiryDate ? `, förfaller ${formatDate(employee.id06ExpiryDate)}` : ""}`,
         10,
       );
+    } else if (employee.skills.includes("ID06")) {
+      drawLine("ID06", 10);
     }
     if (employee.otherCompetence) {
       drawLine(`Övrigt: ${employee.otherCompetence}`.slice(0, 130), 10);

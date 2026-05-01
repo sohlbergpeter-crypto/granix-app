@@ -41,7 +41,7 @@ function formatEmployeeCompetences(employee: {
         ? "APV"
         : null,
     employee.id06Date
-      ? `ID06: utbildningsdatum ${formatDate(employee.id06Date)}${employee.id06ExpiryDate ? `, förfaller ${formatDate(employee.id06ExpiryDate)}` : ""}`
+      ? `ID06: giltig från ${formatDate(employee.id06Date)}${employee.id06ExpiryDate ? `, förfaller ${formatDate(employee.id06ExpiryDate)}` : ""}`
       : employee.skills.includes("ID06")
         ? "ID06"
         : null,
