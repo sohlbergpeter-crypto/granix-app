@@ -84,7 +84,24 @@ export function AdminForms({ teams, employees }: { teams: Option[]; employees: O
               </Select>
             </Field>
           </div>
-          <Field label="Kompetenser, kommaseparerade"><Input name="skills" placeholder="Marksten, kantsten, grävare" /></Field>
+          <div className="grid gap-3 rounded-[20px] border border-[rgba(27,43,49,0.1)] bg-[rgba(255,255,255,0.72)] p-4">
+            <p className="text-[0.85rem] font-bold text-[#59707a]">Kompetenser</p>
+            <div className="field-row">
+              <label className="flex items-center gap-2 text-[#1b2b31]">
+                <input name="hasApv" type="checkbox" />
+                <span>APV</span>
+              </label>
+              <Field label="Datum APV"><Input name="apvDate" type="date" /></Field>
+            </div>
+            <div className="field-row">
+              <label className="flex items-center gap-2 text-[#1b2b31]">
+                <input name="hasId06" type="checkbox" />
+                <span>ID06</span>
+              </label>
+              <Field label="Datum ID06"><Input name="id06Date" type="date" /></Field>
+            </div>
+            <Field label="Övrigt"><Input name="otherCompetence" placeholder="Övrig kompetens eller certifiering" /></Field>
+          </div>
           <Message state={employeeState} />
           <Button variant="secondary" type="submit">Lägg till anställd</Button>
         </form>

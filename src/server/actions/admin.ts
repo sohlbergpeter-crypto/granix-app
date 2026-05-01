@@ -40,7 +40,11 @@ export async function createEmployeeAction(_: unknown, formData: FormData) {
     email: formData.get("email"),
     title: formData.get("title"),
     teamId: formData.get("teamId"),
-    skills: formData.get("skills"),
+    hasApv: formData.get("hasApv") === "on",
+    apvDate: formData.get("apvDate"),
+    hasId06: formData.get("hasId06") === "on",
+    id06Date: formData.get("id06Date"),
+    otherCompetence: formData.get("otherCompetence"),
   });
   if (!parsed.success) return { error: parsed.error.errors[0]?.message || "Anställd kunde inte sparas." };
 
@@ -52,7 +56,14 @@ export async function createEmployeeAction(_: unknown, formData: FormData) {
       email: parsed.data.email || null,
       phone: parsed.data.phone || null,
       teamId: parsed.data.teamId || null,
-      skills: parsed.data.skills.split(",").map((skill) => skill.trim()).filter(Boolean),
+      apvDate: parsed.data.hasApv && parsed.data.apvDate ? new Date(`${parsed.data.apvDate}T00:00:00.000`) : null,
+      id06Date: parsed.data.hasId06 && parsed.data.id06Date ? new Date(`${parsed.data.id06Date}T00:00:00.000`) : null,
+      otherCompetence: parsed.data.otherCompetence || null,
+      skills: [
+        ...(parsed.data.hasApv ? ["APV"] : []),
+        ...(parsed.data.hasId06 ? ["ID06"] : []),
+        ...(parsed.data.otherCompetence ? [parsed.data.otherCompetence] : []),
+      ],
     },
   });
   revalidatePath("/admin");

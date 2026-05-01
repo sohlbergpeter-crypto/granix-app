@@ -1,0 +1,4 @@
+ALTER TABLE "Employee"
+ADD COLUMN "apvDate" TIMESTAMP(3),
+ADD COLUMN "id06Date" TIMESTAMP(3),
+ADD COLUMN "otherCompetence" TEXT;

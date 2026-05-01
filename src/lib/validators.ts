@@ -54,7 +54,26 @@ export const employeeSchema = z.object({
   email: z.string().trim().email("Ange giltig e-post."),
   title: z.string().trim().min(2),
   teamId: optionalText,
-  skills: z.string().trim().min(2, "Ange minst en kompetens."),
+  hasApv: z.coerce.boolean().default(false),
+  apvDate: optionalText,
+  hasId06: z.coerce.boolean().default(false),
+  id06Date: optionalText,
+  otherCompetence: optionalText,
+}).superRefine((data, ctx) => {
+  if (data.hasApv && !data.apvDate) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["apvDate"],
+      message: "Välj datum för APV.",
+    });
+  }
+  if (data.hasId06 && !data.id06Date) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["id06Date"],
+      message: "Välj datum för ID06.",
+    });
+  }
 });
 
 export const teamSchema = z.object({

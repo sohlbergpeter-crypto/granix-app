@@ -88,7 +88,13 @@ export default async function AdminPage() {
                 <p className="item-meta">{employee.team?.name || "Inget team"} · {employee.phone || "Ingen telefon"}</p>
                 <p className="item-meta">{employee.personalNumber || "Inget personnummer"} · {employee.email || "Ingen e-post"}</p>
                 <p className="item-meta">{employee.address || "Ingen adress"}</p>
-                <p className="item-meta">{employee.skills.length ? employee.skills.join(", ") : "Inga kompetenser angivna"}</p>
+                <p className="item-meta">
+                  {[
+                    employee.apvDate ? `APV: ${employee.apvDate.toISOString().slice(0, 10)}` : null,
+                    employee.id06Date ? `ID06: ${employee.id06Date.toISOString().slice(0, 10)}` : null,
+                    employee.otherCompetence ? `Övrigt: ${employee.otherCompetence}` : null,
+                  ].filter(Boolean).join(" · ") || "Inga kompetenser angivna"}
+                </p>
                 <AdminDeleteForm
                   action={deleteEmployeeAction}
                   id={employee.id}

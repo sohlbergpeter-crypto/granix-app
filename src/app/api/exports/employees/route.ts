@@ -52,9 +52,9 @@ export async function GET() {
     if (employee.phone) drawLine(`Telefon: ${employee.phone}`, 10);
     if (employee.email) drawLine(`E-post: ${employee.email}`, 10);
     drawLine(`Arbetslag: ${employee.team?.name || "Inget arbetslag"}`, 10);
-    if (employee.skills.length > 0) {
-      drawLine(`Kompetenser: ${employee.skills.join(", ")}`.slice(0, 130), 10);
-    }
+    if (employee.apvDate) drawLine(`APV: ${employee.apvDate.toISOString().slice(0, 10)}`, 10);
+    if (employee.id06Date) drawLine(`ID06: ${employee.id06Date.toISOString().slice(0, 10)}`, 10);
+    if (employee.otherCompetence) drawLine(`Övrigt: ${employee.otherCompetence}`.slice(0, 130), 10);
     y -= 8;
   }
 
