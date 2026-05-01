@@ -2,8 +2,17 @@ import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { DiaryModule } from "@/components/diary/diary-module";
 
-export default async function DiaryPage() {
+function parseDate(value: string | undefined, endOfDay = false) {
+  if (!value) return null;
+  const date = new Date(`${value}T${endOfDay ? "23:59:59.999" : "00:00:00.000"}`);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+export default async function DiaryPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const user = await requireUser();
+  const params = await searchParams;
+  const from = parseDate(params.from);
+  const to = parseDate(params.to, true);
   const [projects, myEntriesRaw, allEntriesRaw] = await Promise.all([
     db.project.findMany({ where: { status: { notIn: ["klart", "fakturerat", "installt"] } }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
     db.diaryEntry.findMany({
@@ -13,6 +22,16 @@ export default async function DiaryPage() {
     }),
     user.role === "admin"
       ? db.diaryEntry.findMany({
+          where: {
+            ...(from || to
+              ? {
+                  date: {
+                    ...(from ? { gte: from } : {}),
+                    ...(to ? { lte: to } : {}),
+                  },
+                }
+              : {}),
+          },
           include: { project: true, employee: true },
           orderBy: [{ date: "desc" }, { createdAt: "desc" }],
         })
@@ -36,6 +55,8 @@ export default async function DiaryPage() {
       myEntries={myEntriesRaw.map(mapEntry)}
       allEntries={allEntriesRaw.map(mapEntry)}
       isAdmin={user.role === "admin"}
+      filterFrom={params.from || ""}
+      filterTo={params.to || ""}
     />
   );
 }

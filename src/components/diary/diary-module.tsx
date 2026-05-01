@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { saveDiaryEntryAction } from "@/server/actions/worklogs";
+import { withBasePath } from "@/lib/base-path";
 
 type Option = { id: string; name: string };
 type DiaryItem = {
@@ -82,11 +84,15 @@ export function DiaryModule({
   myEntries,
   allEntries,
   isAdmin,
+  filterFrom,
+  filterTo,
 }: {
   projects: Option[];
   myEntries: DiaryItem[];
   allEntries: DiaryItem[];
   isAdmin: boolean;
+  filterFrom: string;
+  filterTo: string;
 }) {
   const [state, action, pending] = useActionState(saveDiaryEntryAction, null);
   const [form, setForm] = useState<EditableDiary>(emptyForm);
@@ -245,6 +251,27 @@ export function DiaryModule({
                 <h2 className="text-[1.35rem] font-black text-[#1b2b31]">Alla dagboksinlägg</h2>
               </div>
             </div>
+            <form className="planning-form mb-4">
+              <div className="field-row">
+                <label className="field">
+                  <span>Från datum</span>
+                  <input name="from" type="date" defaultValue={filterFrom} />
+                </label>
+                <label className="field">
+                  <span>Till datum</span>
+                  <input name="to" type="date" defaultValue={filterTo} />
+                </label>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <button className="secondary-button" type="submit">Visa period</button>
+                <Link
+                  className="ghost-button"
+                  href={withBasePath(`/api/exports/diary?from=${encodeURIComponent(filterFrom)}&to=${encodeURIComponent(filterTo)}`)}
+                >
+                  Ladda ned sammanställning
+                </Link>
+              </div>
+            </form>
             <div className="selected-day-list">
               {allEntries.length ? allEntries.map((entry) => (
                 <DiaryCard key={entry.id} entry={entry} showEmployee onEdit={(selected) => setForm(mapEntryToForm(selected))} />
@@ -255,7 +282,7 @@ export function DiaryModule({
             <div className="card-header">
               <div>
                 <p className="section-label">Summering</p>
-                <h2 className="text-[1.35rem] font-black text-[#1b2b31]">Projektaktivitet</h2>
+                <h2 className="text-[1.35rem] font-black text-[#1b2b31]">Projektaktivitet i vald period</h2>
               </div>
             </div>
             <div className="team-summary">

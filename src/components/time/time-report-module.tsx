@@ -1,8 +1,10 @@
 "use client";
 
 import { AllowanceType } from "@prisma/client";
+import Link from "next/link";
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { saveTimeReportAction } from "@/server/actions/worklogs";
+import { withBasePath } from "@/lib/base-path";
 
 type Option = { id: string; name: string };
 type TimeReportItem = {
@@ -97,11 +99,15 @@ export function TimeReportModule({
   myReports,
   allReports,
   isAdmin,
+  filterFrom,
+  filterTo,
 }: {
   projects: Option[];
   myReports: TimeReportItem[];
   allReports: TimeReportItem[];
   isAdmin: boolean;
+  filterFrom: string;
+  filterTo: string;
 }) {
   const [state, action, pending] = useActionState(saveTimeReportAction, null);
   const [form, setForm] = useState<EditableReport>(emptyForm);
@@ -276,6 +282,27 @@ export function TimeReportModule({
                 <h2 className="text-[1.35rem] font-black text-[#1b2b31]">Alla tidrapporter</h2>
               </div>
             </div>
+            <form className="planning-form mb-4">
+              <div className="field-row">
+                <label className="field">
+                  <span>Från datum</span>
+                  <input name="from" type="date" defaultValue={filterFrom} />
+                </label>
+                <label className="field">
+                  <span>Till datum</span>
+                  <input name="to" type="date" defaultValue={filterTo} />
+                </label>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <button className="secondary-button" type="submit">Visa period</button>
+                <Link
+                  className="ghost-button"
+                  href={withBasePath(`/api/exports/time-reports?from=${encodeURIComponent(filterFrom)}&to=${encodeURIComponent(filterTo)}`)}
+                >
+                  Ladda ned sammanställning
+                </Link>
+              </div>
+            </form>
             <div className="selected-day-list">
               {allReports.length ? allReports.map((report) => (
                 <ReportCard key={report.id} report={report} showEmployee onEdit={(entry) => setForm(mapReportToForm(entry))} />
@@ -286,7 +313,7 @@ export function TimeReportModule({
             <div className="card-header">
               <div>
                 <p className="section-label">Summering</p>
-                <h2 className="text-[1.35rem] font-black text-[#1b2b31]">Rapporterade timmar</h2>
+                <h2 className="text-[1.35rem] font-black text-[#1b2b31]">Rapporterade timmar i vald period</h2>
               </div>
             </div>
             <div className="team-summary">
