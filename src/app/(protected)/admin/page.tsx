@@ -193,6 +193,12 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
                   </div>
                 </div>
                 <div className="mt-3 flex flex-wrap gap-2">
+                  <a
+                    className="inline-flex min-h-11 items-center justify-center rounded-full border border-[rgba(15,118,110,0.16)] bg-[rgba(15,118,110,0.1)] px-4 py-2 text-sm font-bold text-[#115e59] transition duration-150 hover:-translate-y-0.5 hover:bg-[rgba(15,118,110,0.16)]"
+                    href={withBasePath(`/api/exports/employees/certificate?employeeId=${employee.id}`)}
+                  >
+                    Skriv ut utbildningsbevis
+                  </a>
                   <Link href={`/admin?editEmployee=${employee.id}`}>
                     <button className="inline-flex min-h-11 items-center justify-center rounded-full border border-[rgba(27,43,49,0.14)] bg-transparent px-4 py-2 text-sm font-bold text-[#1b2b31] transition duration-150 hover:-translate-y-0.5 hover:bg-white/80" type="button">
                       Redigera
