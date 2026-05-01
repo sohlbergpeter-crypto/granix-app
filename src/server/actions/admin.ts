@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
-import { employeeSchema, machineSchema, teamSchema, userSchema, vehicleSchema } from "@/lib/validators";
+import { employeeSchema, machineSchema, teamSchema, userSchema, userUpdateSchema, vehicleSchema } from "@/lib/validators";
 
 function buildEmployeeName(firstName: string, lastName: string) {
   return `${firstName.trim()} ${lastName.trim()}`.trim();
@@ -34,16 +34,22 @@ function employeeFormValues(formData: FormData) {
   };
 }
 
+function userFormValues(formData: FormData) {
+  return {
+    id: String(formData.get("id") || ""),
+    username: String(formData.get("username") || ""),
+    email: String(formData.get("email") || ""),
+    password: String(formData.get("password") || ""),
+    role: String(formData.get("role") || "user") as "admin" | "user",
+    employeeId: String(formData.get("employeeId") || ""),
+  };
+}
+
 export async function createUserAction(_: unknown, formData: FormData) {
   await requireAdmin();
-  const parsed = userSchema.safeParse({
-    username: formData.get("username"),
-    email: formData.get("email"),
-    password: formData.get("password"),
-    role: formData.get("role"),
-    employeeId: formData.get("employeeId"),
-  });
-  if (!parsed.success) return { error: parsed.error.errors[0]?.message || "Användaren kunde inte sparas." };
+  const submittedValues = userFormValues(formData);
+  const parsed = userSchema.safeParse(submittedValues);
+  if (!parsed.success) return { error: parsed.error.errors[0]?.message || "Användaren kunde inte sparas.", values: submittedValues };
 
   await db.user.create({
     data: {
@@ -53,6 +59,35 @@ export async function createUserAction(_: unknown, formData: FormData) {
       role: parsed.data.role,
       employeeId: parsed.data.employeeId || null,
     },
+  });
+  revalidatePath("/admin");
+  return { ok: true };
+}
+
+export async function updateUserAction(_: unknown, formData: FormData) {
+  const currentUser = await requireAdmin();
+  const id = String(formData.get("id") || "");
+  if (!id) return { error: "Ingen användare angavs." };
+
+  const submittedValues = userFormValues(formData);
+  const parsed = userUpdateSchema.safeParse(submittedValues);
+  if (!parsed.success) return { error: parsed.error.errors[0]?.message || "Användaren kunde inte uppdateras.", values: submittedValues };
+
+  const existingUser = await db.user.findUnique({ where: { id } });
+  if (!existingUser) return { error: "Användaren finns inte längre.", values: submittedValues };
+
+  await db.user.update({
+    where: { id },
+    data: {
+      username: parsed.data.username.toLowerCase(),
+      email: parsed.data.email || null,
+      role: parsed.data.role,
+      employeeId: parsed.data.employeeId || null,
+      ...(parsed.data.password ? { passwordHash: await bcrypt.hash(parsed.data.password, 12) } : {}),
+    },
+  });
+  await db.auditLog.create({
+    data: { userId: currentUser.id, entity: "User", entityId: id, action: "update" },
   });
   revalidatePath("/admin");
   return { ok: true };

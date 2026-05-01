@@ -55,6 +55,7 @@ function formatEmployeeCompetences(employee: {
 export default async function AdminPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const currentUser = await requireAdmin();
   const params = await searchParams;
+  const editUserId = params.editUser || "";
   const editEmployeeId = params.editEmployee || "";
 
   const [users, employees, teams, machines, vehicles] = await Promise.all([
@@ -77,6 +78,18 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
     db.machine.findMany({ orderBy: { name: "asc" } }),
     db.vehicle.findMany({ orderBy: { name: "asc" } }),
   ]);
+
+  const editingUserRaw = editUserId ? users.find((user) => user.id === editUserId) : null;
+  const editingUser = editingUserRaw
+    ? {
+        id: editingUserRaw.id,
+        username: editingUserRaw.username,
+        email: editingUserRaw.email || "",
+        password: "",
+        role: editingUserRaw.role,
+        employeeId: editingUserRaw.employeeId || "",
+      }
+    : null;
 
   const editingEmployeeRaw = editEmployeeId ? employees.find((employee) => employee.id === editEmployeeId) : null;
   const splitName = editingEmployeeRaw ? splitEmployeeName(editingEmployeeRaw.name) : null;
@@ -139,7 +152,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         </Card>
       </section>
 
-      <AdminForms teams={teams} employees={employees} editingEmployee={editingEmployee} />
+      <AdminForms teams={teams} employees={employees} editingUser={editingUser} editingEmployee={editingEmployee} />
 
       <section className="admin-grid">
         <Card className="glass-card">
@@ -155,6 +168,13 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
                   <span className="type-badge">{user.role}</span>
                 </div>
                 <p className="item-meta">{user.email || "Ingen e-post"} · {user.employee?.name || "Ingen anställd kopplad"}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Link href={`/admin?editUser=${user.id}`}>
+                    <button className="inline-flex min-h-11 items-center justify-center rounded-full border border-[rgba(27,43,49,0.14)] bg-transparent px-4 py-2 text-sm font-bold text-[#1b2b31] transition duration-150 hover:-translate-y-0.5 hover:bg-white/80" type="button">
+                      Redigera
+                    </button>
+                  </Link>
+                </div>
                 <AdminDeleteForm
                   action={deleteUserAction}
                   id={user.id}

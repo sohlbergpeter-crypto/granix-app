@@ -10,12 +10,32 @@ import {
   createUserAction,
   createVehicleAction,
   updateEmployeeAction,
+  updateUserAction,
 } from "@/server/actions/admin";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Field, Input, Select, Textarea } from "@/components/ui/field";
 
 type Option = { id: string; name: string };
+
+type EditingUser = {
+  id: string;
+  username: string;
+  email: string;
+  password: string;
+  role: Role;
+  employeeId: string;
+};
+
+type UserFormValues = EditingUser;
+
+type UserActionState =
+  | {
+      error?: string;
+      ok?: boolean;
+      values?: UserFormValues;
+    }
+  | null;
 
 type EditingEmployee = {
   id: string;
@@ -80,21 +100,44 @@ function getInitialEmployeeDraft(editingEmployee?: EditingEmployee | null): Empl
   };
 }
 
+function getInitialUserDraft(editingUser?: EditingUser | null): UserFormValues {
+  return editingUser || {
+    id: "",
+    username: "",
+    email: "",
+    password: "",
+    role: Role.user,
+    employeeId: "",
+  };
+}
+
 export function AdminForms({
   teams,
   employees,
+  editingUser,
   editingEmployee,
 }: {
   teams: Option[];
   employees: Option[];
+  editingUser?: EditingUser | null;
   editingEmployee?: EditingEmployee | null;
 }) {
-  const [userState, userAction] = useActionState(createUserAction, null);
+  const [userState, userAction] = useActionState<UserActionState, FormData>(editingUser ? updateUserAction : createUserAction, null);
   const [employeeState, employeeAction] = useActionState<EmployeeActionState, FormData>(editingEmployee ? updateEmployeeAction : createEmployeeAction, null);
   const [teamState, teamAction] = useActionState(createTeamAction, null);
   const [machineState, machineAction] = useActionState(createMachineAction, null);
   const [vehicleState, vehicleAction] = useActionState(createVehicleAction, null);
+  const [userDraft, setUserDraft] = useState<UserFormValues>(() => getInitialUserDraft(editingUser));
   const [employeeDraft, setEmployeeDraft] = useState<EmployeeFormValues>(() => getInitialEmployeeDraft(editingEmployee));
+
+  useEffect(() => {
+    if (!userState?.values) return;
+    setUserDraft(userState.values);
+  }, [userState]);
+
+  useEffect(() => {
+    setUserDraft(getInitialUserDraft(editingUser));
+  }, [editingUser]);
 
   useEffect(() => {
     if (!employeeState?.values) return;
@@ -108,31 +151,40 @@ export function AdminForms({
   return (
     <div className="admin-grid">
       <Card className="glass-card">
-        <div className="mb-4">
-          <p className="eyebrow">Administration</p>
-          <CardTitle>Nytt användarkonto</CardTitle>
+        <div className="mb-4 flex items-start justify-between gap-3">
+          <div>
+            <p className="eyebrow">Administration</p>
+            <CardTitle>{editingUser ? "Redigera användarkonto" : "Nytt användarkonto"}</CardTitle>
+          </div>
+          {editingUser ? (
+            <Link href="/admin">
+              <Button variant="ghost" type="button">Avbryt</Button>
+            </Link>
+          ) : null}
         </div>
         <form action={userAction} className="planning-form">
-          <Field label="Användarnamn"><Input name="username" required /></Field>
-          <Field label="E-post"><Input name="email" type="email" /></Field>
-          <Field label="Lösenord"><Input name="password" type="password" minLength={6} required /></Field>
+          {userDraft.id ? <input name="id" type="hidden" value={userDraft.id} /> : null}
+          <Field label="Användarnamn"><Input name="username" required value={userDraft.username} onChange={(event) => setUserDraft((current) => ({ ...current, username: event.target.value }))} /></Field>
+          <Field label="E-post"><Input name="email" type="email" value={userDraft.email} onChange={(event) => setUserDraft((current) => ({ ...current, email: event.target.value }))} /></Field>
+          <Field label="Lösenord"><Input name="password" type="password" minLength={6} required={!editingUser} value={userDraft.password} onChange={(event) => setUserDraft((current) => ({ ...current, password: event.target.value }))} /></Field>
+          {editingUser ? <p className="dashboard-note">Lämna lösenord tomt för att behålla nuvarande lösenord.</p> : null}
           <div className="field-row">
             <Field label="Roll">
-              <Select name="role" defaultValue={Role.user}>
+              <Select name="role" value={userDraft.role} onChange={(event) => setUserDraft((current) => ({ ...current, role: event.target.value as Role }))}>
                 <option value={Role.user}>User</option>
                 <option value={Role.admin}>Admin</option>
               </Select>
             </Field>
             <Field label="Befintlig anställd">
-              <Select name="employeeId" defaultValue="">
+              <Select name="employeeId" value={userDraft.employeeId} onChange={(event) => setUserDraft((current) => ({ ...current, employeeId: event.target.value }))}>
                 <option value="">Ingen koppling</option>
                 {employees.map((employee) => <option key={employee.id} value={employee.id}>{employee.name}</option>)}
               </Select>
             </Field>
           </div>
-          <p className="dashboard-note">Om ingen anställd väljs skapas en ny anställd automatiskt för användaren.</p>
+          {!editingUser ? <p className="dashboard-note">Om ingen anställd väljs skapas en ny anställd automatiskt för användaren.</p> : null}
           <Message state={userState} />
-          <Button variant="secondary" type="submit">Lägg till användare</Button>
+          <Button variant="secondary" type="submit">{editingUser ? "Spara ändringar" : "Lägg till användare"}</Button>
         </form>
       </Card>
 

@@ -46,6 +46,16 @@ export const userSchema = z.object({
   employeeId: z.string().optional().or(z.literal("")),
 });
 
+export const userUpdateSchema = z.object({
+  username: z.string().trim().min(2),
+  email: z.string().email().optional().or(z.literal("")),
+  password: z.string().trim().optional().or(z.literal("")).refine((value) => !value || value.length >= 6, {
+    message: "Lösenord måste vara minst 6 tecken.",
+  }),
+  role: z.nativeEnum(Role),
+  employeeId: z.string().optional().or(z.literal("")),
+});
+
 export const employeeSchema = z.object({
   firstName: z.string().trim().min(2, "Ange förnamn."),
   lastName: z.string().trim().min(2, "Ange efternamn."),
