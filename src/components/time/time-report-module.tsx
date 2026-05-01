@@ -1,6 +1,6 @@
 "use client";
 
-import { AllowanceType } from "@prisma/client";
+import { AllowanceType, TimeReportType } from "@prisma/client";
 import Link from "next/link";
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { saveTimeReportAction } from "@/server/actions/worklogs";
@@ -9,6 +9,7 @@ import { withBasePath } from "@/lib/base-path";
 type Option = { id: string; name: string };
 type TimeReportItem = {
   id: string;
+  type: TimeReportType;
   date: string;
   hours: number;
   travelWithinHours: number;
@@ -22,6 +23,7 @@ type TimeReportItem = {
 
 type EditableReport = {
   id: string;
+  type: TimeReportType;
   date: string;
   projectId: string;
   hours: string;
@@ -33,6 +35,7 @@ type EditableReport = {
 
 const emptyForm: EditableReport = {
   id: "",
+  type: "arbete",
   date: "",
   projectId: "",
   hours: "8",
@@ -48,9 +51,17 @@ function allowanceLabel(value: AllowanceType) {
   return "Inget traktamente";
 }
 
+function reportTypeLabel(value: TimeReportType) {
+  if (value === "sjuk") return "Sjuk";
+  if (value === "ledig") return "Ledig";
+  if (value === "vab") return "VAB";
+  return "Arbete";
+}
+
 function mapReportToForm(report: TimeReportItem): EditableReport {
   return {
     id: report.id,
+    type: report.type,
     date: report.date,
     projectId: report.projectId,
     hours: String(report.hours),
@@ -77,6 +88,7 @@ function ReportCard({
           <h3 className="item-title">{showEmployee ? report.employeeName : report.projectName}</h3>
           <div className="item-meta">
             {report.date}<br />
+            Typ: {reportTypeLabel(report.type)}<br />
             {showEmployee ? report.projectName : report.employeeName}<br />
             Arbetstid: {report.hours} h<br />
             Restid inom arbetstid: {report.travelWithinHours} h<br />
@@ -84,7 +96,7 @@ function ReportCard({
             {allowanceLabel(report.allowance)}
           </div>
         </div>
-        <span className="status-badge status-planerad">{report.hours} h</span>
+        <span className="status-badge status-planerad">{reportTypeLabel(report.type)}</span>
       </div>
       <div className="item-meta">{report.notes}</div>
       <div className="mt-3">
@@ -124,6 +136,8 @@ export function TimeReportModule({
     }
   }, [state]);
 
+  const isAbsence = form.type !== "arbete";
+
   const totalHours = useMemo(
     () =>
       allReports.reduce<Record<string, number>>((accumulator, report) => {
@@ -160,9 +174,9 @@ export function TimeReportModule({
               <span className="metric-subtext">Aktiva projekt</span>
             </div>
             <div className="metric-card">
-              <span className="metric-label">Adminunderlag</span>
-              <span className="metric-value text-[#1b2b31]">{isAdmin ? allReports.length : myReports.length}</span>
-              <span className="metric-subtext">{isAdmin ? "Alla tidrader" : "Mina tidrader"}</span>
+              <span className="metric-label">Frånvarorader</span>
+              <span className="metric-value text-[#1b2b31]">{myReports.filter((report) => report.type !== "arbete").length}</span>
+              <span className="metric-subtext">Sjuk, ledig och VAB</span>
             </div>
           </div>
         </article>
@@ -176,7 +190,7 @@ export function TimeReportModule({
           </div>
           <div className="stack-block">
             <p className="dashboard-note">
-              Välj projekt, ange arbetstid, restid och skriv vad som utförts. Om du behöver rätta något kan du öppna en tidigare rad och spara om den.
+              Välj om du rapporterar arbete eller frånvaro. Vid arbete väljer du projekt. Vid sjuk, ledig eller VAB kan du rapportera utan projektkoppling.
             </p>
             <div className="summary-grid">
               <div className="summary-chip">
@@ -209,47 +223,66 @@ export function TimeReportModule({
             <input type="hidden" name="id" value={form.id} />
             <div className="field-row">
               <label className="field">
-                <span>Datum</span>
-                <input name="date" type="date" value={form.date} onChange={(event) => setForm((current) => ({ ...current, date: event.target.value }))} required />
+                <span>Typ</span>
+                <select name="type" value={form.type} onChange={(event) => setForm((current) => ({ ...current, type: event.target.value as TimeReportType, projectId: event.target.value === "arbete" ? current.projectId : "" }))}>
+                  <option value="arbete">Arbete</option>
+                  <option value="sjuk">Sjuk</option>
+                  <option value="ledig">Ledig</option>
+                  <option value="vab">VAB</option>
+                </select>
               </label>
               <label className="field">
-                <span>Projekt</span>
-                <select name="projectId" value={form.projectId} onChange={(event) => setForm((current) => ({ ...current, projectId: event.target.value }))} required>
-                  <option value="">Välj projekt</option>
-                  {projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}
-                </select>
+                <span>Datum</span>
+                <input name="date" type="date" value={form.date} onChange={(event) => setForm((current) => ({ ...current, date: event.target.value }))} required />
               </label>
             </div>
 
             <div className="field-row">
               <label className="field">
+                <span>Projekt</span>
+                <select name="projectId" value={form.projectId} onChange={(event) => setForm((current) => ({ ...current, projectId: event.target.value }))} required={!isAbsence} disabled={isAbsence}>
+                  <option value="">{isAbsence ? "Ej aktuellt vid frånvaro" : "Välj projekt"}</option>
+                  {projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}
+                </select>
+              </label>
+              <label className="field">
                 <span>Timmar</span>
                 <input name="hours" type="number" min="0.5" step="0.5" value={form.hours} onChange={(event) => setForm((current) => ({ ...current, hours: event.target.value }))} required />
               </label>
+            </div>
+
+            <div className="field-row">
               <label className="field">
                 <span>Traktamente</span>
-                <select name="allowance" value={form.allowance} onChange={(event) => setForm((current) => ({ ...current, allowance: event.target.value as AllowanceType }))}>
+                <select name="allowance" value={form.allowance} onChange={(event) => setForm((current) => ({ ...current, allowance: event.target.value as AllowanceType }))} disabled={isAbsence}>
                   <option value="nej">Nej</option>
                   <option value="halv">Halvt</option>
                   <option value="hel">Helt</option>
                 </select>
               </label>
+              <label className="field">
+                <span>Restid inom arbetstid</span>
+                <input name="travelWithinHours" type="number" min="0" step="0.5" value={form.travelWithinHours} onChange={(event) => setForm((current) => ({ ...current, travelWithinHours: event.target.value }))} disabled={isAbsence} />
+              </label>
             </div>
 
             <div className="field-row">
               <label className="field">
-                <span>Restid inom arbetstid</span>
-                <input name="travelWithinHours" type="number" min="0" step="0.5" value={form.travelWithinHours} onChange={(event) => setForm((current) => ({ ...current, travelWithinHours: event.target.value }))} />
-              </label>
-              <label className="field">
                 <span>Restid utanför arbetstid</span>
-                <input name="travelOutsideHours" type="number" min="0" step="0.5" value={form.travelOutsideHours} onChange={(event) => setForm((current) => ({ ...current, travelOutsideHours: event.target.value }))} />
+                <input name="travelOutsideHours" type="number" min="0" step="0.5" value={form.travelOutsideHours} onChange={(event) => setForm((current) => ({ ...current, travelOutsideHours: event.target.value }))} disabled={isAbsence} />
               </label>
             </div>
 
             <label className="field">
               <span>Kommentar</span>
-              <textarea name="notes" rows={4} value={form.notes} onChange={(event) => setForm((current) => ({ ...current, notes: event.target.value }))} required placeholder="Beskriv vilket jobb som utförts under dagen" />
+              <textarea
+                name="notes"
+                rows={4}
+                value={form.notes}
+                onChange={(event) => setForm((current) => ({ ...current, notes: event.target.value }))}
+                required
+                placeholder={isAbsence ? "Beskriv frånvaro, till exempel sjuk, ledig eller VAB" : "Beskriv vilket jobb som utförts under dagen"}
+              />
             </label>
 
             {state?.error ? <p className="text-sm text-[#b91c1c]">{state.error}</p> : null}

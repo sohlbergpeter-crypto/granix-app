@@ -16,6 +16,13 @@ function formatPeriod(from: string | null, to: string | null) {
   return "alla datum";
 }
 
+function reportTypeLabel(value: string) {
+  if (value === "sjuk") return "Sjuk";
+  if (value === "ledig") return "Ledig";
+  if (value === "vab") return "VAB";
+  return "Arbete";
+}
+
 export async function GET(request: NextRequest) {
   await requireAdmin();
 
@@ -61,7 +68,7 @@ export async function GET(request: NextRequest) {
     color: rgb(0.35, 0.44, 0.48),
   });
   y -= 16;
-  page.drawText(`Valt projekt: ${reports[0]?.project.name && projectId ? reports[0].project.name : projectId ? "Ingen träff" : "Alla projekt"}`, {
+  page.drawText(`Valt projekt: ${reports[0]?.project?.name && projectId ? reports[0].project.name : projectId ? "Ingen träff" : "Alla projekt"}`, {
     x: 40,
     y,
     size: 11,
@@ -95,7 +102,7 @@ export async function GET(request: NextRequest) {
         y = 800;
       }
 
-      currentPage.drawText(`${report.date.toISOString().slice(0, 10)}  ${report.project.name}`, {
+      currentPage.drawText(`${report.date.toISOString().slice(0, 10)}  ${reportTypeLabel(report.type)}  ${report.project?.name || "Ingen projektkoppling"}`, {
         x: 40,
         y,
         size: 11,

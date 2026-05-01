@@ -1,4 +1,4 @@
-import { AllowanceType, ProjectStatus, ResourceStatus, Role } from "@prisma/client";
+import { AllowanceType, ProjectStatus, ResourceStatus, Role, TimeReportType } from "@prisma/client";
 import { z } from "zod";
 
 const optionalText = z.string().trim().optional().or(z.literal(""));
@@ -95,13 +95,22 @@ export const vehicleSchema = z.object({
 
 export const timeReportSchema = z.object({
   id: z.string().optional(),
+  type: z.nativeEnum(TimeReportType),
   date: z.coerce.date(),
-  projectId: z.string().trim().min(1, "Välj projekt."),
+  projectId: optionalText,
   hours: z.coerce.number().min(0.5, "Ange minst 0.5 timmar."),
   travelWithinHours: z.coerce.number().min(0).default(0),
   travelOutsideHours: z.coerce.number().min(0).default(0),
   allowance: z.nativeEnum(AllowanceType),
-  notes: z.string().trim().min(3, "Beskriv vilket jobb som utförts."),
+  notes: z.string().trim().min(3, "Beskriv rapporten."),
+}).superRefine((data, ctx) => {
+  if (data.type === TimeReportType.arbete && !data.projectId) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["projectId"],
+      message: "Välj projekt.",
+    });
+  }
 });
 
 export const diaryEntrySchema = z.object({

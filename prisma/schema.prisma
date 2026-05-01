@@ -47,6 +47,13 @@ enum AllowanceType {
   hel
 }
 
+enum TimeReportType {
+  arbete
+  sjuk
+  ledig
+  vab
+}
+
 model User {
   id           String         @id @default(cuid())
   username     String         @unique
@@ -240,8 +247,9 @@ model TimeReport {
   id                 String        @id @default(cuid())
   employeeId         String
   employee           Employee      @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  projectId          String
-  project            Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId          String?
+  project            Project?      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  type               TimeReportType @default(arbete)
   date               DateTime
   hours              Float
   travelWithinHours  Float         @default(0)

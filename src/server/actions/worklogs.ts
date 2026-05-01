@@ -13,6 +13,7 @@ export async function saveTimeReportAction(_: unknown, formData: FormData) {
 
   const parsed = timeReportSchema.safeParse({
     id: formData.get("id") || undefined,
+    type: formData.get("type"),
     date: formData.get("date"),
     projectId: formData.get("projectId"),
     hours: formData.get("hours"),
@@ -34,8 +35,9 @@ export async function saveTimeReportAction(_: unknown, formData: FormData) {
   await db.timeReport.upsert({
     where: { id: parsed.data.id || "__new__" },
     create: {
+      type: parsed.data.type,
       date: parsed.data.date,
-      projectId: parsed.data.projectId,
+      projectId: parsed.data.projectId || null,
       hours: parsed.data.hours,
       travelWithinHours: parsed.data.travelWithinHours,
       travelOutsideHours: parsed.data.travelOutsideHours,
@@ -45,8 +47,9 @@ export async function saveTimeReportAction(_: unknown, formData: FormData) {
       createdByUserId: existing?.createdByUserId || user.id,
     },
     update: {
+      type: parsed.data.type,
       date: parsed.data.date,
-      projectId: parsed.data.projectId,
+      projectId: parsed.data.projectId || null,
       hours: parsed.data.hours,
       travelWithinHours: parsed.data.travelWithinHours,
       travelOutsideHours: parsed.data.travelOutsideHours,

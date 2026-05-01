@@ -14,6 +14,8 @@ export default async function TimeReportsPage({ searchParams }: { searchParams: 
   const from = parseDate(params.from);
   const to = parseDate(params.to, true);
   const employeeId = params.employeeId || "";
+  const projectId = params.projectId || "";
+
   const [projects, employees, myReportsRaw, allReportsRaw] = await Promise.all([
     db.project.findMany({ where: { status: { notIn: ["klart", "fakturerat", "installt"] } }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
     user.role === "admin" ? db.employee.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }) : Promise.resolve([]),
@@ -26,6 +28,7 @@ export default async function TimeReportsPage({ searchParams }: { searchParams: 
       ? db.timeReport.findMany({
           where: {
             ...(employeeId ? { employeeId } : {}),
+            ...(projectId ? { projectId } : {}),
             ...(from || to
               ? {
                   date: {
@@ -43,15 +46,16 @@ export default async function TimeReportsPage({ searchParams }: { searchParams: 
 
   const mapReport = (report: typeof myReportsRaw[number]) => ({
     id: report.id,
+    type: report.type,
     date: report.date.toISOString().slice(0, 10),
     hours: report.hours,
     travelWithinHours: report.travelWithinHours,
     travelOutsideHours: report.travelOutsideHours,
     allowance: report.allowance,
     notes: report.notes,
-    projectName: report.project.name,
+    projectName: report.project?.name || "Ingen projektkoppling",
     employeeName: report.employee.name,
-    projectId: report.projectId,
+    projectId: report.projectId || "",
   });
 
   return (
@@ -64,7 +68,7 @@ export default async function TimeReportsPage({ searchParams }: { searchParams: 
       filterFrom={params.from || ""}
       filterTo={params.to || ""}
       filterEmployeeId={employeeId}
-      filterProjectId={params.projectId || ""}
+      filterProjectId={projectId}
     />
   );
 }
