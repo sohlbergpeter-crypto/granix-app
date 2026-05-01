@@ -58,6 +58,9 @@ export default async function TimeReportsPage({ searchParams }: { searchParams: 
     projectId: report.projectId || "",
   });
 
+  const defaultProjectId =
+    myReportsRaw.find((report) => report.type === "arbete" && report.projectId)?.projectId || "";
+
   return (
     <TimeReportModule
       projects={projects}
@@ -69,6 +72,7 @@ export default async function TimeReportsPage({ searchParams }: { searchParams: 
       filterTo={params.to || ""}
       filterEmployeeId={employeeId}
       filterProjectId={projectId}
+      defaultProjectId={defaultProjectId}
     />
   );
 }

@@ -33,17 +33,19 @@ type EditableReport = {
   notes: string;
 };
 
-const emptyForm: EditableReport = {
-  id: "",
-  type: "arbete",
-  date: "",
-  projectId: "",
-  hours: "8",
-  travelWithinHours: "0",
-  travelOutsideHours: "0",
-  allowance: "nej",
-  notes: "",
-};
+function createEmptyForm(defaultProjectId: string): EditableReport {
+  return {
+    id: "",
+    type: "arbete",
+    date: "",
+    projectId: defaultProjectId,
+    hours: "8",
+    travelWithinHours: "0",
+    travelOutsideHours: "0",
+    allowance: "nej",
+    notes: "",
+  };
+}
 
 function allowanceLabel(value: AllowanceType) {
   if (value === "halv") return "Halvt traktamente";
@@ -116,6 +118,7 @@ export function TimeReportModule({
   filterTo,
   filterEmployeeId,
   filterProjectId,
+  defaultProjectId,
 }: {
   projects: Option[];
   employees: Option[];
@@ -126,15 +129,16 @@ export function TimeReportModule({
   filterTo: string;
   filterEmployeeId: string;
   filterProjectId: string;
+  defaultProjectId: string;
 }) {
   const [state, action, pending] = useActionState(saveTimeReportAction, null);
-  const [form, setForm] = useState<EditableReport>(emptyForm);
+  const [form, setForm] = useState<EditableReport>(() => createEmptyForm(defaultProjectId));
 
   useEffect(() => {
     if (state && "ok" in state && state.ok) {
-      setForm(emptyForm);
+      setForm(createEmptyForm(defaultProjectId));
     }
-  }, [state]);
+  }, [state, defaultProjectId]);
 
   const isAbsence = form.type !== "arbete";
 
@@ -224,7 +228,17 @@ export function TimeReportModule({
             <div className="field-row">
               <label className="field">
                 <span>Typ</span>
-                <select name="type" value={form.type} onChange={(event) => setForm((current) => ({ ...current, type: event.target.value as TimeReportType, projectId: event.target.value === "arbete" ? current.projectId : "" }))}>
+                <select
+                  name="type"
+                  value={form.type}
+                  onChange={(event) =>
+                    setForm((current) => ({
+                      ...current,
+                      type: event.target.value as TimeReportType,
+                      projectId: event.target.value === "arbete" ? current.projectId || defaultProjectId : "",
+                    }))
+                  }
+                >
                   <option value="arbete">Arbete</option>
                   <option value="sjuk">Sjuk</option>
                   <option value="ledig">Ledig</option>
@@ -289,7 +303,7 @@ export function TimeReportModule({
             <div className="flex flex-wrap gap-3">
               <button className="primary-button" type="submit" disabled={pending}>{pending ? "Sparar..." : form.id ? "Spara ändringar" : "Spara tidrapport"}</button>
               {form.id ? (
-                <button className="ghost-button" type="button" onClick={() => setForm(emptyForm)}>Avbryt redigering</button>
+                <button className="ghost-button" type="button" onClick={() => setForm(createEmptyForm(defaultProjectId))}>Avbryt redigering</button>
               ) : null}
             </div>
           </form>
