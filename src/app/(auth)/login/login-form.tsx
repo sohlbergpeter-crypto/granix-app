@@ -27,12 +27,6 @@ export function LoginForm() {
 
       <button className="primary-button" type="submit" disabled={pending}>{pending ? "Loggar in..." : "Logga in"}</button>
       <p className="text-sm text-[#b91c1c]">{state?.error || ""}</p>
-
-      <div className="grid gap-1 rounded-[20px] border border-[rgba(34,51,59,0.1)] bg-[rgba(255,255,255,0.72)] p-4 text-sm text-[#59707a]">
-        <strong className="text-[#1b2b31]">Standardkonto</strong>
-        <span>Användare: <code>admin</code></span>
-        <span>Lösenord: <code>admin123</code></span>
-      </div>
     </form>
   );
 }
