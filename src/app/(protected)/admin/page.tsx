@@ -53,8 +53,6 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         id06Date: formatDate(editingEmployeeRaw.id06Date),
         id06ExpiryDate: formatDate(editingEmployeeRaw.id06ExpiryDate),
         otherCompetence: editingEmployeeRaw.otherCompetence || "",
-        otherCompetenceDate: formatDate(editingEmployeeRaw.otherCompetenceDate),
-        otherCompetenceExpiryDate: formatDate(editingEmployeeRaw.otherCompetenceExpiryDate),
       }
     : null;
 
@@ -125,9 +123,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
                     employee.id06Date
                       ? `ID06: utbildningsdatum ${formatDate(employee.id06Date)}${employee.id06ExpiryDate ? `, förfaller ${formatDate(employee.id06ExpiryDate)}` : ""}`
                       : null,
-                    employee.otherCompetence
-                      ? `Övrigt: ${employee.otherCompetence}${employee.otherCompetenceDate ? `, utbildningsdatum ${formatDate(employee.otherCompetenceDate)}` : ""}${employee.otherCompetenceExpiryDate ? `, förfaller ${formatDate(employee.otherCompetenceExpiryDate)}` : ""}`
-                      : null,
+                    employee.otherCompetence ? `Övrigt: ${employee.otherCompetence}` : null,
                   ].filter(Boolean).join(" · ") || "Inga kompetenser angivna"}
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">

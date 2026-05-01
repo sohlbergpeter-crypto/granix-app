@@ -31,8 +31,6 @@ type EditingEmployee = {
   id06Date: string;
   id06ExpiryDate: string;
   otherCompetence: string;
-  otherCompetenceDate: string;
-  otherCompetenceExpiryDate: string;
 };
 
 function Message({ state }: { state: { error?: string; ok?: boolean } | null }) {
@@ -139,10 +137,6 @@ export function AdminForms({
               <Field label="Förfaller ID06"><Input name="id06ExpiryDate" type="date" defaultValue={editingEmployee?.id06ExpiryDate || ""} /></Field>
             </div>
             <Field label="Övrigt"><Input name="otherCompetence" placeholder="Övrig kompetens eller certifiering" defaultValue={editingEmployee?.otherCompetence || ""} /></Field>
-            <div className="field-row">
-              <Field label="Utbildningsdatum övrigt"><Input name="otherCompetenceDate" type="date" defaultValue={editingEmployee?.otherCompetenceDate || ""} /></Field>
-              <Field label="Förfaller övrigt"><Input name="otherCompetenceExpiryDate" type="date" defaultValue={editingEmployee?.otherCompetenceExpiryDate || ""} /></Field>
-            </div>
           </div>
           <Message state={employeeState} />
           <Button variant="secondary" type="submit">{editingEmployee ? "Spara ändringar" : "Lägg till anställd"}</Button>

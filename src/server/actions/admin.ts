@@ -47,8 +47,6 @@ export async function createEmployeeAction(_: unknown, formData: FormData) {
     id06Date: formData.get("id06Date"),
     id06ExpiryDate: formData.get("id06ExpiryDate"),
     otherCompetence: formData.get("otherCompetence"),
-    otherCompetenceDate: formData.get("otherCompetenceDate"),
-    otherCompetenceExpiryDate: formData.get("otherCompetenceExpiryDate"),
   });
   if (!parsed.success) return { error: parsed.error.errors[0]?.message || "Anställd kunde inte sparas." };
 
@@ -65,8 +63,8 @@ export async function createEmployeeAction(_: unknown, formData: FormData) {
       id06Date: parsed.data.hasId06 && parsed.data.id06Date ? new Date(`${parsed.data.id06Date}T00:00:00.000`) : null,
       id06ExpiryDate: parsed.data.hasId06 && parsed.data.id06ExpiryDate ? new Date(`${parsed.data.id06ExpiryDate}T00:00:00.000`) : null,
       otherCompetence: parsed.data.otherCompetence || null,
-      otherCompetenceDate: parsed.data.otherCompetence && parsed.data.otherCompetenceDate ? new Date(`${parsed.data.otherCompetenceDate}T00:00:00.000`) : null,
-      otherCompetenceExpiryDate: parsed.data.otherCompetence && parsed.data.otherCompetenceExpiryDate ? new Date(`${parsed.data.otherCompetenceExpiryDate}T00:00:00.000`) : null,
+      otherCompetenceDate: null,
+      otherCompetenceExpiryDate: null,
       skills: [
         ...(parsed.data.hasApv ? ["APV"] : []),
         ...(parsed.data.hasId06 ? ["ID06"] : []),
@@ -98,8 +96,6 @@ export async function updateEmployeeAction(_: unknown, formData: FormData) {
     id06Date: formData.get("id06Date"),
     id06ExpiryDate: formData.get("id06ExpiryDate"),
     otherCompetence: formData.get("otherCompetence"),
-    otherCompetenceDate: formData.get("otherCompetenceDate"),
-    otherCompetenceExpiryDate: formData.get("otherCompetenceExpiryDate"),
   });
   if (!parsed.success) return { error: parsed.error.errors[0]?.message || "Anställd kunde inte uppdateras." };
 
@@ -118,8 +114,8 @@ export async function updateEmployeeAction(_: unknown, formData: FormData) {
       id06Date: parsed.data.hasId06 && parsed.data.id06Date ? new Date(`${parsed.data.id06Date}T00:00:00.000`) : null,
       id06ExpiryDate: parsed.data.hasId06 && parsed.data.id06ExpiryDate ? new Date(`${parsed.data.id06ExpiryDate}T00:00:00.000`) : null,
       otherCompetence: parsed.data.otherCompetence || null,
-      otherCompetenceDate: parsed.data.otherCompetence && parsed.data.otherCompetenceDate ? new Date(`${parsed.data.otherCompetenceDate}T00:00:00.000`) : null,
-      otherCompetenceExpiryDate: parsed.data.otherCompetence && parsed.data.otherCompetenceExpiryDate ? new Date(`${parsed.data.otherCompetenceExpiryDate}T00:00:00.000`) : null,
+      otherCompetenceDate: null,
+      otherCompetenceExpiryDate: null,
       skills: [
         ...(parsed.data.hasApv ? ["APV"] : []),
         ...(parsed.data.hasId06 ? ["ID06"] : []),

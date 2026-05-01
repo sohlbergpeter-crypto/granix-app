@@ -69,10 +69,7 @@ export async function GET() {
       );
     }
     if (employee.otherCompetence) {
-      drawLine(
-        `Övrigt: ${employee.otherCompetence}${employee.otherCompetenceDate ? `, utbildningsdatum ${formatDate(employee.otherCompetenceDate)}` : ""}${employee.otherCompetenceExpiryDate ? `, förfaller ${formatDate(employee.otherCompetenceExpiryDate)}` : ""}`.slice(0, 130),
-        10,
-      );
+      drawLine(`Övrigt: ${employee.otherCompetence}`.slice(0, 130), 10);
     }
     y -= 8;
   }
