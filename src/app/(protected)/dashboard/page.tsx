@@ -8,6 +8,8 @@ import { ProjectCalendar } from "@/components/calendar/project-calendar";
 import { withBasePath } from "@/lib/base-path";
 import { formatDate, isActiveProjectStatus, weekNumber } from "@/lib/utils";
 
+const PLANNING_NOTICE = "Observera: Tider är preliminära och kan justeras beroende på väder och förutsättningar.";
+
 function MetricCard({ label, value, subtext, accent = false }: { label: string; value: number; subtext?: string; accent?: boolean }) {
   return (
     <div className="metric-card">
@@ -191,6 +193,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
                     <span className={`status-badge status-${project.status}`}>{project.status}</span>
                   </div>
                   <p className="item-meta">{project.city} · {formatDate(project.startDate)} till {formatDate(project.endDate)}</p>
+                  <p className="item-meta">{PLANNING_NOTICE}</p>
                 </div>
               )) : <div className="empty-state">Inga aktiva projekt ligger på dagens datum.</div>}
             </div>
@@ -248,6 +251,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
                   <span className={`status-badge status-${project.status}`}>{project.status}</span>
                 </div>
                 <p className="item-meta">{formatDate(project.startDate)} till {formatDate(project.endDate)} · {project.city}</p>
+                <p className="item-meta">{PLANNING_NOTICE}</p>
               </Link>
             )) : <div className="empty-state">Det finns inga kommande projekt i ditt urval just nu.</div>}
           </div>

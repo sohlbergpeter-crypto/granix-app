@@ -3,6 +3,8 @@ import { PDFDocument, StandardFonts, rgb } from "pdf-lib/cjs";
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 
+const PLANNING_NOTICE = "Observera: Tider är preliminära och kan justeras beroende på väder och förutsättningar.";
+
 function parseDate(value: string | null, endOfDay = false) {
   if (!value) return null;
   const date = new Date(`${value}T${endOfDay ? "23:59:59.999" : "00:00:00.000"}`);
@@ -86,6 +88,7 @@ export async function GET(request: NextRequest) {
       drawLine(project.name, 13, true, rgb(0.07, 0.37, 0.35));
       drawLine(`Ort: ${project.city}`, 10);
       drawLine(`Period: ${project.startDate.toISOString().slice(0, 10)} till ${project.endDate.toISOString().slice(0, 10)}`, 10);
+      drawLine(PLANNING_NOTICE.slice(0, 130), 10);
       y -= 8;
       continue;
     }
@@ -111,6 +114,8 @@ export async function GET(request: NextRequest) {
     if (project.internalNote) {
       drawLine(`Intern anteckning: ${project.internalNote}`.slice(0, 130), 10);
     }
+
+    drawLine(PLANNING_NOTICE.slice(0, 130), 10);
 
     y -= 8;
   }
