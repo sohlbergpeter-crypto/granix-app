@@ -68,11 +68,11 @@ export async function GET() {
     }
     if (employee.id06Date) {
       drawLine(
-        `ID06: giltig från ${formatDate(employee.id06Date)}${employee.id06ExpiryDate ? `, förfaller ${formatDate(employee.id06ExpiryDate)}` : ""}`,
+        `ID06: ${employee.id06Number ? `nummer ${employee.id06Number}, ` : ""}giltig från ${formatDate(employee.id06Date)}${employee.id06ExpiryDate ? `, förfaller ${formatDate(employee.id06ExpiryDate)}` : ""}`,
         10,
       );
     } else if (employee.skills.includes("ID06")) {
-      drawLine("ID06", 10);
+      drawLine(employee.id06Number ? `ID06: nummer ${employee.id06Number}` : "ID06", 10);
     }
     if (employee.otherCompetence) {
       drawLine(`Övrigt: ${employee.otherCompetence}`.slice(0, 130), 10);

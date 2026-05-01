@@ -34,6 +34,7 @@ type EditingEmployee = {
   apvExpiryDate: string;
   hasId06: boolean;
   id06Date: string;
+  id06Number: string;
   id06ExpiryDate: string;
   otherCompetence: string;
 };
@@ -146,6 +147,9 @@ export function AdminForms({
                 <span>ID06</span>
               </label>
               <Field label="ID06 giltig från"><Input name="id06Date" type="date" defaultValue={editingEmployee?.id06Date || ""} /></Field>
+              <Field label="ID06-nummer"><Input name="id06Number" defaultValue={editingEmployee?.id06Number || ""} /></Field>
+            </div>
+            <div className="field-row">
               <Field label="Förfaller ID06"><Input name="id06ExpiryDate" type="date" defaultValue={editingEmployee?.id06ExpiryDate || ""} /></Field>
             </div>
             <Field label="Övrigt"><Input name="otherCompetence" placeholder="Övrig kompetens eller certifiering" defaultValue={editingEmployee?.otherCompetence || ""} /></Field>

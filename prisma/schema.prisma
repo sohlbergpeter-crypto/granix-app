@@ -98,6 +98,7 @@ model Employee {
   apvDate     DateTime?
   apvExpiryDate DateTime?
   id06Date    DateTime?
+  id06Number  String?
   id06ExpiryDate DateTime?
   otherCompetence String?
   otherCompetenceDate DateTime?

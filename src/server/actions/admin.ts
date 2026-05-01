@@ -52,6 +52,7 @@ export async function createEmployeeAction(_: unknown, formData: FormData) {
     apvExpiryDate: formData.get("apvExpiryDate"),
     hasId06: formData.get("hasId06") === "on",
     id06Date: formData.get("id06Date"),
+    id06Number: formData.get("id06Number"),
     id06ExpiryDate: formData.get("id06ExpiryDate"),
     otherCompetence: formData.get("otherCompetence"),
   });
@@ -71,6 +72,7 @@ export async function createEmployeeAction(_: unknown, formData: FormData) {
       apvDate: parsed.data.hasApv && parsed.data.apvDate ? new Date(`${parsed.data.apvDate}T00:00:00.000`) : null,
       apvExpiryDate: parsed.data.hasApv && parsed.data.apvExpiryDate ? new Date(`${parsed.data.apvExpiryDate}T00:00:00.000`) : null,
       id06Date: parsed.data.hasId06 && parsed.data.id06Date ? new Date(`${parsed.data.id06Date}T00:00:00.000`) : null,
+      id06Number: parsed.data.hasId06 ? parsed.data.id06Number || null : null,
       id06ExpiryDate: parsed.data.hasId06 && parsed.data.id06ExpiryDate ? new Date(`${parsed.data.id06ExpiryDate}T00:00:00.000`) : null,
       otherCompetence: parsed.data.otherCompetence || null,
       otherCompetenceDate: null,
@@ -107,6 +109,7 @@ export async function updateEmployeeAction(_: unknown, formData: FormData) {
     apvExpiryDate: formData.get("apvExpiryDate"),
     hasId06: formData.get("hasId06") === "on",
     id06Date: formData.get("id06Date"),
+    id06Number: formData.get("id06Number"),
     id06ExpiryDate: formData.get("id06ExpiryDate"),
     otherCompetence: formData.get("otherCompetence"),
   });
@@ -127,6 +130,7 @@ export async function updateEmployeeAction(_: unknown, formData: FormData) {
       apvDate: parsed.data.hasApv && parsed.data.apvDate ? new Date(`${parsed.data.apvDate}T00:00:00.000`) : null,
       apvExpiryDate: parsed.data.hasApv && parsed.data.apvExpiryDate ? new Date(`${parsed.data.apvExpiryDate}T00:00:00.000`) : null,
       id06Date: parsed.data.hasId06 && parsed.data.id06Date ? new Date(`${parsed.data.id06Date}T00:00:00.000`) : null,
+      id06Number: parsed.data.hasId06 ? parsed.data.id06Number || null : null,
       id06ExpiryDate: parsed.data.hasId06 && parsed.data.id06ExpiryDate ? new Date(`${parsed.data.id06ExpiryDate}T00:00:00.000`) : null,
       otherCompetence: parsed.data.otherCompetence || null,
       otherCompetenceDate: null,

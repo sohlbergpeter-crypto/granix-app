@@ -62,6 +62,7 @@ export const employeeSchema = z.object({
   apvExpiryDate: optionalText,
   hasId06: z.coerce.boolean().default(false),
   id06Date: optionalText,
+  id06Number: optionalText,
   id06ExpiryDate: optionalText,
   otherCompetence: optionalText,
 }).superRefine((data, ctx) => {
@@ -84,6 +85,13 @@ export const employeeSchema = z.object({
       code: z.ZodIssueCode.custom,
       path: ["id06Date"],
       message: "Välj datum då ID06 börjar gälla.",
+    });
+  }
+  if (data.hasId06 && !data.id06Number) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["id06Number"],
+      message: "Ange ID06-nummer.",
     });
   }
   if (data.hasId06 && !data.id06ExpiryDate) {

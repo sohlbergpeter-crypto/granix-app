@@ -30,6 +30,7 @@ function formatEmployeeCompetences(employee: {
   apvDate: Date | null;
   apvExpiryDate: Date | null;
   id06Date: Date | null;
+  id06Number: string | null;
   id06ExpiryDate: Date | null;
   otherCompetence: string | null;
   skills: string[];
@@ -41,9 +42,9 @@ function formatEmployeeCompetences(employee: {
         ? "APV"
         : null,
     employee.id06Date
-      ? `ID06: giltig från ${formatDate(employee.id06Date)}${employee.id06ExpiryDate ? `, förfaller ${formatDate(employee.id06ExpiryDate)}` : ""}`
+      ? `ID06: ${employee.id06Number ? `nummer ${employee.id06Number}, ` : ""}giltig från ${formatDate(employee.id06Date)}${employee.id06ExpiryDate ? `, förfaller ${formatDate(employee.id06ExpiryDate)}` : ""}`
       : employee.skills.includes("ID06")
-        ? "ID06"
+        ? `ID06${employee.id06Number ? `: nummer ${employee.id06Number}` : ""}`
         : null,
     employee.otherCompetence ? `Övrigt: ${employee.otherCompetence}` : null,
   ].filter(Boolean) as string[];
@@ -95,6 +96,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         apvExpiryDate: formatDate(editingEmployeeRaw.apvExpiryDate),
         hasId06: editingEmployeeRaw.id06Date !== null || editingEmployeeRaw.skills.includes("ID06"),
         id06Date: formatDate(editingEmployeeRaw.id06Date),
+        id06Number: editingEmployeeRaw.id06Number || "",
         id06ExpiryDate: formatDate(editingEmployeeRaw.id06ExpiryDate),
         otherCompetence: editingEmployeeRaw.otherCompetence || "",
       }
