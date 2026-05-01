@@ -85,3 +85,54 @@ export async function createVehicleAction(_: unknown, formData: FormData) {
   revalidatePath("/admin");
   return { ok: true };
 }
+
+export async function deleteUserAction(_: { error?: string; ok?: boolean } | null, formData: FormData) {
+  const currentUser = await requireAdmin();
+  const id = String(formData.get("id") || "");
+  if (!id) return { error: "Ingen användare angavs." };
+  if (id === currentUser.id) return { error: "Du kan inte ta bort kontot du är inloggad med." };
+
+  const user = await db.user.findUnique({ where: { id } });
+  if (!user) return { error: "Användaren finns inte längre." };
+
+  await db.user.delete({ where: { id } });
+  await db.auditLog.create({
+    data: { userId: currentUser.id, entity: "User", entityId: id, action: "delete" },
+  });
+  revalidatePath("/admin");
+  return { ok: true };
+}
+
+export async function deleteEmployeeAction(_: { error?: string; ok?: boolean } | null, formData: FormData) {
+  const currentUser = await requireAdmin();
+  const id = String(formData.get("id") || "");
+  if (!id) return { error: "Ingen anställd angavs." };
+  if (currentUser.employeeId === id) return { error: "Du kan inte ta bort den anställd som är kopplad till ditt konto." };
+
+  const employee = await db.employee.findUnique({
+    where: { id },
+    include: {
+      _count: {
+        select: {
+          users: true,
+          projects: true,
+          timeReports: true,
+          diaryEntries: true,
+        },
+      },
+    },
+  });
+
+  if (!employee) return { error: "Den anställda finns inte längre." };
+  if (employee._count.users > 0) return { error: "Den anställda är kopplad till ett eller flera användarkonton." };
+  if (employee._count.projects > 0) return { error: "Den anställda är fortfarande kopplad till projekt." };
+  if (employee._count.timeReports > 0) return { error: "Den anställda har tidrapporter och kan inte tas bort." };
+  if (employee._count.diaryEntries > 0) return { error: "Den anställda har dagboksinlägg och kan inte tas bort." };
+
+  await db.employee.delete({ where: { id } });
+  await db.auditLog.create({
+    data: { userId: currentUser.id, entity: "Employee", entityId: id, action: "delete" },
+  });
+  revalidatePath("/admin");
+  return { ok: true };
+}

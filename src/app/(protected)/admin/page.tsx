@@ -1,13 +1,28 @@
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
+import { deleteEmployeeAction, deleteUserAction } from "@/server/actions/admin";
 import { AdminForms } from "@/components/admin/admin-forms";
+import { AdminDeleteForm } from "@/components/admin/admin-delete-form";
 import { Card, CardTitle } from "@/components/ui/card";
 
 export default async function AdminPage() {
-  await requireAdmin();
+  const currentUser = await requireAdmin();
   const [users, employees, teams, machines, vehicles] = await Promise.all([
     db.user.findMany({ include: { employee: true }, orderBy: { username: "asc" } }),
-    db.employee.findMany({ include: { team: true }, orderBy: { name: "asc" } }),
+    db.employee.findMany({
+      include: {
+        team: true,
+        _count: {
+          select: {
+            users: true,
+            projects: true,
+            timeReports: true,
+            diaryEntries: true,
+          },
+        },
+      },
+      orderBy: { name: "asc" },
+    }),
     db.team.findMany({ orderBy: { name: "asc" } }),
     db.machine.findMany({ orderBy: { name: "asc" } }),
     db.vehicle.findMany({ orderBy: { name: "asc" } }),
@@ -37,6 +52,13 @@ export default async function AdminPage() {
                   <span className="type-badge">{user.role}</span>
                 </div>
                 <p className="item-meta">{user.email || "Ingen e-post"} · {user.employee?.name || "Ingen anställd kopplad"}</p>
+                <AdminDeleteForm
+                  action={deleteUserAction}
+                  id={user.id}
+                  label="Ta bort användare"
+                  disabled={user.id === currentUser.id}
+                  disabledReason={user.id === currentUser.id ? "Du kan inte ta bort kontot du använder just nu." : undefined}
+                />
               </div>
             ))}
           </div>
@@ -55,6 +77,31 @@ export default async function AdminPage() {
                   <span className="type-badge">{employee.title}</span>
                 </div>
                 <p className="item-meta">{employee.team?.name || "Inget team"} · {employee.phone || "Ingen telefon"}</p>
+                <AdminDeleteForm
+                  action={deleteEmployeeAction}
+                  id={employee.id}
+                  label="Ta bort anställd"
+                  disabled={
+                    currentUser.employeeId === employee.id ||
+                    employee._count.users > 0 ||
+                    employee._count.projects > 0 ||
+                    employee._count.timeReports > 0 ||
+                    employee._count.diaryEntries > 0
+                  }
+                  disabledReason={
+                    currentUser.employeeId === employee.id
+                      ? "Detta är den anställd som är kopplad till ditt konto."
+                      : employee._count.users > 0
+                        ? "Kopplad till användarkonto."
+                        : employee._count.projects > 0
+                          ? "Kopplad till projekt."
+                          : employee._count.timeReports > 0
+                            ? "Har tidrapporter."
+                            : employee._count.diaryEntries > 0
+                              ? "Har dagboksinlägg."
+                              : undefined
+                  }
+                />
               </div>
             ))}
           </div>
