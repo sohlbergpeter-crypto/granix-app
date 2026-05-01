@@ -39,6 +39,7 @@ export async function GET(request: NextRequest) {
 
   const fromRaw = request.nextUrl.searchParams.get("from");
   const toRaw = request.nextUrl.searchParams.get("to");
+  const exportMode = request.nextUrl.searchParams.get("mode") === "customer" ? "customer" : "internal";
   const from = parseDate(fromRaw);
   const to = parseDate(toRaw, true);
 
@@ -74,13 +75,21 @@ export async function GET(request: NextRequest) {
     y -= size + 6;
   };
 
-  page.drawText("Granix - Planering", { x: 40, y, size: 20, font: boldFont, color: rgb(0.1, 0.17, 0.19) });
+  page.drawText(exportMode === "customer" ? "Granix - Projektplanering" : "Granix - Planering", { x: 40, y, size: 20, font: boldFont, color: rgb(0.1, 0.17, 0.19) });
   y -= 22;
   drawLine(`Period: ${formatPeriod(fromRaw, toRaw)}`, 11, false);
   drawLine(`Antal projekt: ${projects.length}`, 11, true, rgb(0.1, 0.17, 0.19));
   y -= 8;
 
   for (const project of projects) {
+    if (exportMode === "customer") {
+      drawLine(project.name, 13, true, rgb(0.07, 0.37, 0.35));
+      drawLine(`Ort: ${project.city}`, 10);
+      drawLine(`Period: ${project.startDate.toISOString().slice(0, 10)} till ${project.endDate.toISOString().slice(0, 10)}`, 10);
+      y -= 8;
+      continue;
+    }
+
     drawLine(`${project.projectNumber} ${project.name}`, 13, true, rgb(0.07, 0.37, 0.35));
     drawLine(`Kund: ${project.customerName} | Status: ${project.status} | Ort: ${project.city}`, 10);
     drawLine(`Period: ${project.startDate.toISOString().slice(0, 10)} till ${project.endDate.toISOString().slice(0, 10)}`, 10);
@@ -111,7 +120,7 @@ export async function GET(request: NextRequest) {
   return new NextResponse(Buffer.from(bytes), {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="planering-${fromRaw || "start"}-${toRaw || "slut"}.pdf"`,
+      "Content-Disposition": `attachment; filename="${exportMode === "customer" ? "kundplanering" : "planering"}-${fromRaw || "start"}-${toRaw || "slut"}.pdf"`,
     },
   });
 }

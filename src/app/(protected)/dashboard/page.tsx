@@ -330,6 +330,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
                 >
                   Ladda ned PDF
                 </a>
+                <a
+                  className="inline-flex min-h-11 items-center justify-center rounded-full border border-[rgba(27,43,49,0.14)] bg-transparent px-4 py-2 text-sm font-bold text-[#1b2b31] transition duration-150 hover:-translate-y-0.5 hover:bg-white/80"
+                  href={withBasePath(`/api/exports/planning?mode=customer&from=${encodeURIComponent(filterFrom)}&to=${encodeURIComponent(filterTo)}`)}
+                >
+                  Ladda ned kund-PDF
+                </a>
               </div>
             </form>
           </Card>
