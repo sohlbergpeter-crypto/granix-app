@@ -85,13 +85,19 @@ export async function GET(request: NextRequest) {
     drawLine(`Kund: ${project.customerName} | Status: ${project.status} | Ort: ${project.city}`, 10);
     drawLine(`Period: ${project.startDate.toISOString().slice(0, 10)} till ${project.endDate.toISOString().slice(0, 10)}`, 10);
 
-    const employees = project.employees.map((entry) => entry.employee.name).join(", ") || "Inga anställda kopplade";
-    const machines = project.machines.map((entry) => entry.machine.name).join(", ") || "Inga maskiner kopplade";
-    const vehicles = project.vehicles.map((entry) => entry.vehicle.name).join(", ") || "Inga fordon kopplade";
+    const employees = project.employees.map((entry) => entry.employee.name).join(", ");
+    const machines = project.machines.map((entry) => entry.machine.name).join(", ");
+    const vehicles = project.vehicles.map((entry) => entry.vehicle.name).join(", ");
 
-    drawLine(`Anställda: ${employees}`.slice(0, 130), 10);
-    drawLine(`Maskiner: ${machines}`.slice(0, 130), 10);
-    drawLine(`Fordon: ${vehicles}`.slice(0, 130), 10);
+    if (employees) {
+      drawLine(`Anställda: ${employees}`.slice(0, 130), 10);
+    }
+    if (machines) {
+      drawLine(`Maskiner: ${machines}`.slice(0, 130), 10);
+    }
+    if (vehicles) {
+      drawLine(`Fordon: ${vehicles}`.slice(0, 130), 10);
+    }
 
     if (project.internalNote) {
       drawLine(`Intern anteckning: ${project.internalNote}`.slice(0, 130), 10);
