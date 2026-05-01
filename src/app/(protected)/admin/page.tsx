@@ -4,7 +4,9 @@ import { requireAdmin } from "@/lib/auth";
 import { deleteEmployeeAction, deleteUserAction } from "@/server/actions/admin";
 import { AdminForms } from "@/components/admin/admin-forms";
 import { AdminDeleteForm } from "@/components/admin/admin-delete-form";
+import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
+import { Field, Select } from "@/components/ui/field";
 import { withBasePath } from "@/lib/base-path";
 
 function formatDate(value: Date | null | undefined) {
@@ -108,7 +110,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         <p className="eyebrow">Administration</p>
         <h1 className="text-[1.8rem] font-black text-[#1b2b31]">Användare och anställda</h1>
         <p className="mt-2 text-[#59707a]">Hantera användare, arbetslag, maskiner och fordon i samma vy.</p>
-        <div className="mt-4">
+        <div className="mt-4 flex flex-wrap gap-3">
           <a
             className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#0f766e] px-4 py-2 text-sm font-bold text-white transition duration-150 hover:-translate-y-0.5 hover:bg-[#115e59]"
             href={withBasePath("/api/exports/employees")}
@@ -116,6 +118,25 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
             Ladda ned anställda som PDF
           </a>
         </div>
+        <Card className="glass-card mt-4 p-4">
+          <div className="mb-3">
+            <p className="eyebrow">Utbildningsbevis</p>
+            <CardTitle>Välj anställd att ladda ned</CardTitle>
+          </div>
+          <form action={withBasePath("/api/exports/employees/certificate")} className="field-row" method="get">
+            <Field label="Anställd">
+              <Select defaultValue="" name="employeeId" required>
+                <option value="" disabled>Välj anställd</option>
+                {employees.map((employee) => (
+                  <option key={employee.id} value={employee.id}>{employee.name}</option>
+                ))}
+              </Select>
+            </Field>
+            <div className="flex items-end">
+              <Button type="submit">Ladda ned utbildningsbevis</Button>
+            </div>
+          </form>
+        </Card>
       </section>
 
       <AdminForms teams={teams} employees={employees} editingEmployee={editingEmployee} />
