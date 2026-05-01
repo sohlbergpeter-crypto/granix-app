@@ -48,11 +48,13 @@ export const userSchema = z.object({
 
 export const employeeSchema = z.object({
   name: z.string().trim().min(2),
-  phone: optionalText,
-  email: z.string().email().optional().or(z.literal("")),
+  personalNumber: z.string().trim().min(6, "Ange personnummer."),
+  address: z.string().trim().min(2, "Ange adress."),
+  phone: z.string().trim().min(6, "Ange telefonnummer."),
+  email: z.string().trim().email("Ange giltig e-post."),
   title: z.string().trim().min(2),
   teamId: optionalText,
-  skills: z.string().optional().default(""),
+  skills: z.string().trim().min(2, "Ange minst en kompetens."),
 });
 
 export const teamSchema = z.object({

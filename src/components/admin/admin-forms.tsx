@@ -68,8 +68,12 @@ export function AdminForms({ teams, employees }: { teams: Option[]; employees: O
         <form action={employeeAction} className="planning-form">
           <Field label="Namn"><Input name="name" required /></Field>
           <div className="field-row">
-            <Field label="Telefon"><Input name="phone" /></Field>
-            <Field label="E-post"><Input name="email" type="email" /></Field>
+            <Field label="Personnummer"><Input name="personalNumber" required /></Field>
+            <Field label="Adress"><Input name="address" required /></Field>
+          </div>
+          <div className="field-row">
+            <Field label="Telefon"><Input name="phone" required /></Field>
+            <Field label="E-post"><Input name="email" type="email" required /></Field>
           </div>
           <div className="field-row">
             <Field label="Roll eller titel"><Input name="title" placeholder="Stensättare" required /></Field>

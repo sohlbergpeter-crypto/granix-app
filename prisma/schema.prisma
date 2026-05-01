@@ -80,6 +80,8 @@ model Team {
 model Employee {
   id          String            @id @default(cuid())
   name        String
+  personalNumber String?
+  address     String?
   phone       String?
   email       String?
   title       String

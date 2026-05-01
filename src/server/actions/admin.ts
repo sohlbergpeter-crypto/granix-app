@@ -34,6 +34,8 @@ export async function createEmployeeAction(_: unknown, formData: FormData) {
   await requireAdmin();
   const parsed = employeeSchema.safeParse({
     name: formData.get("name"),
+    personalNumber: formData.get("personalNumber"),
+    address: formData.get("address"),
     phone: formData.get("phone"),
     email: formData.get("email"),
     title: formData.get("title"),
@@ -45,6 +47,8 @@ export async function createEmployeeAction(_: unknown, formData: FormData) {
   await db.employee.create({
     data: {
       ...parsed.data,
+      personalNumber: parsed.data.personalNumber,
+      address: parsed.data.address,
       email: parsed.data.email || null,
       phone: parsed.data.phone || null,
       teamId: parsed.data.teamId || null,

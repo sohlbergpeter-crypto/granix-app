@@ -4,6 +4,7 @@ import { deleteEmployeeAction, deleteUserAction } from "@/server/actions/admin";
 import { AdminForms } from "@/components/admin/admin-forms";
 import { AdminDeleteForm } from "@/components/admin/admin-delete-form";
 import { Card, CardTitle } from "@/components/ui/card";
+import { withBasePath } from "@/lib/base-path";
 
 export default async function AdminPage() {
   const currentUser = await requireAdmin();
@@ -34,6 +35,14 @@ export default async function AdminPage() {
         <p className="eyebrow">Administration</p>
         <h1 className="text-[1.8rem] font-black text-[#1b2b31]">Användare och anställda</h1>
         <p className="mt-2 text-[#59707a]">Hantera användare, arbetslag, maskiner och fordon i samma vy.</p>
+        <div className="mt-4">
+          <a
+            className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#0f766e] px-4 py-2 text-sm font-bold text-white transition duration-150 hover:-translate-y-0.5 hover:bg-[#115e59]"
+            href={withBasePath("/api/exports/employees")}
+          >
+            Ladda ned anställda som PDF
+          </a>
+        </div>
       </section>
 
       <AdminForms teams={teams} employees={employees} />
@@ -77,6 +86,9 @@ export default async function AdminPage() {
                   <span className="type-badge">{employee.title}</span>
                 </div>
                 <p className="item-meta">{employee.team?.name || "Inget team"} · {employee.phone || "Ingen telefon"}</p>
+                <p className="item-meta">{employee.personalNumber || "Inget personnummer"} · {employee.email || "Ingen e-post"}</p>
+                <p className="item-meta">{employee.address || "Ingen adress"}</p>
+                <p className="item-meta">{employee.skills.length ? employee.skills.join(", ") : "Inga kompetenser angivna"}</p>
                 <AdminDeleteForm
                   action={deleteEmployeeAction}
                   id={employee.id}
@@ -90,7 +102,7 @@ export default async function AdminPage() {
                   }
                   disabledReason={
                     currentUser.employeeId === employee.id
-                      ? "Detta är den anställd som är kopplad till ditt konto."
+                      ? "Detta är den anställda som är kopplad till ditt konto."
                       : employee._count.users > 0
                         ? "Kopplad till användarkonto."
                         : employee._count.projects > 0
