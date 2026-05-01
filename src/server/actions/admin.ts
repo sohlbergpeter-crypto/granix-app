@@ -70,6 +70,51 @@ export async function createEmployeeAction(_: unknown, formData: FormData) {
   return { ok: true };
 }
 
+export async function updateEmployeeAction(_: unknown, formData: FormData) {
+  await requireAdmin();
+  const id = String(formData.get("id") || "");
+  if (!id) return { error: "Ingen anställd angavs." };
+
+  const parsed = employeeSchema.safeParse({
+    name: formData.get("name"),
+    personalNumber: formData.get("personalNumber"),
+    address: formData.get("address"),
+    phone: formData.get("phone"),
+    email: formData.get("email"),
+    title: formData.get("title"),
+    teamId: formData.get("teamId"),
+    hasApv: formData.get("hasApv") === "on",
+    apvDate: formData.get("apvDate"),
+    hasId06: formData.get("hasId06") === "on",
+    id06Date: formData.get("id06Date"),
+    otherCompetence: formData.get("otherCompetence"),
+  });
+  if (!parsed.success) return { error: parsed.error.errors[0]?.message || "Anställd kunde inte uppdateras." };
+
+  await db.employee.update({
+    where: { id },
+    data: {
+      name: parsed.data.name,
+      personalNumber: parsed.data.personalNumber,
+      address: parsed.data.address,
+      email: parsed.data.email || null,
+      phone: parsed.data.phone || null,
+      title: parsed.data.title,
+      teamId: parsed.data.teamId || null,
+      apvDate: parsed.data.hasApv && parsed.data.apvDate ? new Date(`${parsed.data.apvDate}T00:00:00.000`) : null,
+      id06Date: parsed.data.hasId06 && parsed.data.id06Date ? new Date(`${parsed.data.id06Date}T00:00:00.000`) : null,
+      otherCompetence: parsed.data.otherCompetence || null,
+      skills: [
+        ...(parsed.data.hasApv ? ["APV"] : []),
+        ...(parsed.data.hasId06 ? ["ID06"] : []),
+        ...(parsed.data.otherCompetence ? [parsed.data.otherCompetence] : []),
+      ],
+    },
+  });
+  revalidatePath("/admin");
+  return { ok: true };
+}
+
 export async function createTeamAction(_: unknown, formData: FormData) {
   await requireAdmin();
   const parsed = teamSchema.safeParse({ name: formData.get("name"), description: formData.get("description") });

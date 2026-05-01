@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { ResourceStatus, Role } from "@prisma/client";
 import { useActionState } from "react";
 import {
@@ -8,12 +9,27 @@ import {
   createTeamAction,
   createUserAction,
   createVehicleAction,
+  updateEmployeeAction,
 } from "@/server/actions/admin";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Field, Input, Select, Textarea } from "@/components/ui/field";
 
 type Option = { id: string; name: string };
+
+type EditingEmployee = {
+  id: string;
+  name: string;
+  personalNumber: string;
+  address: string;
+  phone: string;
+  email: string;
+  title: string;
+  teamId: string;
+  apvDate: string;
+  id06Date: string;
+  otherCompetence: string;
+};
 
 function Message({ state }: { state: { error?: string; ok?: boolean } | null }) {
   if (!state) return null;
@@ -22,9 +38,17 @@ function Message({ state }: { state: { error?: string; ok?: boolean } | null }) 
   return null;
 }
 
-export function AdminForms({ teams, employees }: { teams: Option[]; employees: Option[] }) {
+export function AdminForms({
+  teams,
+  employees,
+  editingEmployee,
+}: {
+  teams: Option[];
+  employees: Option[];
+  editingEmployee?: EditingEmployee | null;
+}) {
   const [userState, userAction] = useActionState(createUserAction, null);
-  const [employeeState, employeeAction] = useActionState(createEmployeeAction, null);
+  const [employeeState, employeeAction] = useActionState(editingEmployee ? updateEmployeeAction : createEmployeeAction, null);
   const [teamState, teamAction] = useActionState(createTeamAction, null);
   const [machineState, machineAction] = useActionState(createMachineAction, null);
   const [vehicleState, vehicleAction] = useActionState(createVehicleAction, null);
@@ -61,24 +85,32 @@ export function AdminForms({ teams, employees }: { teams: Option[]; employees: O
       </Card>
 
       <Card className="glass-card">
-        <div className="mb-4">
-          <p className="eyebrow">Administration</p>
-          <CardTitle>Ny anställd</CardTitle>
+        <div className="mb-4 flex items-start justify-between gap-3">
+          <div>
+            <p className="eyebrow">Administration</p>
+            <CardTitle>{editingEmployee ? "Redigera anställd" : "Ny anställd"}</CardTitle>
+          </div>
+          {editingEmployee ? (
+            <Link href="/admin">
+              <Button variant="ghost" type="button">Avbryt</Button>
+            </Link>
+          ) : null}
         </div>
         <form action={employeeAction} className="planning-form">
-          <Field label="Namn"><Input name="name" required /></Field>
+          {editingEmployee ? <input type="hidden" name="id" value={editingEmployee.id} /> : null}
+          <Field label="Namn"><Input name="name" defaultValue={editingEmployee?.name || ""} required /></Field>
           <div className="field-row">
-            <Field label="Personnummer"><Input name="personalNumber" required /></Field>
-            <Field label="Adress"><Input name="address" required /></Field>
+            <Field label="Personnummer"><Input name="personalNumber" defaultValue={editingEmployee?.personalNumber || ""} required /></Field>
+            <Field label="Adress"><Input name="address" defaultValue={editingEmployee?.address || ""} required /></Field>
           </div>
           <div className="field-row">
-            <Field label="Telefon"><Input name="phone" required /></Field>
-            <Field label="E-post"><Input name="email" type="email" required /></Field>
+            <Field label="Telefon"><Input name="phone" defaultValue={editingEmployee?.phone || ""} required /></Field>
+            <Field label="E-post"><Input name="email" type="email" defaultValue={editingEmployee?.email || ""} required /></Field>
           </div>
           <div className="field-row">
-            <Field label="Roll eller titel"><Input name="title" placeholder="Stensättare" required /></Field>
+            <Field label="Roll eller titel"><Input name="title" placeholder="Stensättare" defaultValue={editingEmployee?.title || ""} required /></Field>
             <Field label="Arbetslag">
-              <Select name="teamId" defaultValue="">
+              <Select name="teamId" defaultValue={editingEmployee?.teamId || ""}>
                 <option value="">Inget arbetslag</option>
                 {teams.map((team) => <option key={team.id} value={team.id}>{team.name}</option>)}
               </Select>
@@ -88,22 +120,22 @@ export function AdminForms({ teams, employees }: { teams: Option[]; employees: O
             <p className="text-[0.85rem] font-bold text-[#59707a]">Kompetenser</p>
             <div className="field-row">
               <label className="flex items-center gap-2 text-[#1b2b31]">
-                <input name="hasApv" type="checkbox" />
+                <input name="hasApv" type="checkbox" defaultChecked={Boolean(editingEmployee?.apvDate)} />
                 <span>APV</span>
               </label>
-              <Field label="Datum APV"><Input name="apvDate" type="date" /></Field>
+              <Field label="Datum APV"><Input name="apvDate" type="date" defaultValue={editingEmployee?.apvDate || ""} /></Field>
             </div>
             <div className="field-row">
               <label className="flex items-center gap-2 text-[#1b2b31]">
-                <input name="hasId06" type="checkbox" />
+                <input name="hasId06" type="checkbox" defaultChecked={Boolean(editingEmployee?.id06Date)} />
                 <span>ID06</span>
               </label>
-              <Field label="Datum ID06"><Input name="id06Date" type="date" /></Field>
+              <Field label="Datum ID06"><Input name="id06Date" type="date" defaultValue={editingEmployee?.id06Date || ""} /></Field>
             </div>
-            <Field label="Övrigt"><Input name="otherCompetence" placeholder="Övrig kompetens eller certifiering" /></Field>
+            <Field label="Övrigt"><Input name="otherCompetence" placeholder="Övrig kompetens eller certifiering" defaultValue={editingEmployee?.otherCompetence || ""} /></Field>
           </div>
           <Message state={employeeState} />
-          <Button variant="secondary" type="submit">Lägg till anställd</Button>
+          <Button variant="secondary" type="submit">{editingEmployee ? "Spara ändringar" : "Lägg till anställd"}</Button>
         </form>
       </Card>
 

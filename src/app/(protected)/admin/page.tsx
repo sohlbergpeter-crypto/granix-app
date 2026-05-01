@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { deleteEmployeeAction, deleteUserAction } from "@/server/actions/admin";
@@ -6,8 +7,11 @@ import { AdminDeleteForm } from "@/components/admin/admin-delete-form";
 import { Card, CardTitle } from "@/components/ui/card";
 import { withBasePath } from "@/lib/base-path";
 
-export default async function AdminPage() {
+export default async function AdminPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const currentUser = await requireAdmin();
+  const params = await searchParams;
+  const editEmployeeId = params.editEmployee || "";
+
   const [users, employees, teams, machines, vehicles] = await Promise.all([
     db.user.findMany({ include: { employee: true }, orderBy: { username: "asc" } }),
     db.employee.findMany({
@@ -29,6 +33,23 @@ export default async function AdminPage() {
     db.vehicle.findMany({ orderBy: { name: "asc" } }),
   ]);
 
+  const editingEmployeeRaw = editEmployeeId ? employees.find((employee) => employee.id === editEmployeeId) : null;
+  const editingEmployee = editingEmployeeRaw
+    ? {
+        id: editingEmployeeRaw.id,
+        name: editingEmployeeRaw.name,
+        personalNumber: editingEmployeeRaw.personalNumber || "",
+        address: editingEmployeeRaw.address || "",
+        phone: editingEmployeeRaw.phone || "",
+        email: editingEmployeeRaw.email || "",
+        title: editingEmployeeRaw.title,
+        teamId: editingEmployeeRaw.teamId || "",
+        apvDate: editingEmployeeRaw.apvDate ? editingEmployeeRaw.apvDate.toISOString().slice(0, 10) : "",
+        id06Date: editingEmployeeRaw.id06Date ? editingEmployeeRaw.id06Date.toISOString().slice(0, 10) : "",
+        otherCompetence: editingEmployeeRaw.otherCompetence || "",
+      }
+    : null;
+
   return (
     <div className="grid gap-4">
       <section>
@@ -45,7 +66,7 @@ export default async function AdminPage() {
         </div>
       </section>
 
-      <AdminForms teams={teams} employees={employees} />
+      <AdminForms teams={teams} employees={employees} editingEmployee={editingEmployee} />
 
       <section className="admin-grid">
         <Card className="glass-card">
@@ -95,6 +116,13 @@ export default async function AdminPage() {
                     employee.otherCompetence ? `Övrigt: ${employee.otherCompetence}` : null,
                   ].filter(Boolean).join(" · ") || "Inga kompetenser angivna"}
                 </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Link href={`/admin?editEmployee=${employee.id}`}>
+                    <button className="inline-flex min-h-11 items-center justify-center rounded-full border border-[rgba(27,43,49,0.14)] bg-transparent px-4 py-2 text-sm font-bold text-[#1b2b31] transition duration-150 hover:-translate-y-0.5 hover:bg-white/80" type="button">
+                      Redigera
+                    </button>
+                  </Link>
+                </div>
                 <AdminDeleteForm
                   action={deleteEmployeeAction}
                   id={employee.id}
