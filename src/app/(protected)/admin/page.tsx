@@ -7,6 +7,10 @@ import { AdminDeleteForm } from "@/components/admin/admin-delete-form";
 import { Card, CardTitle } from "@/components/ui/card";
 import { withBasePath } from "@/lib/base-path";
 
+function formatDate(value: Date | null | undefined) {
+  return value ? value.toISOString().slice(0, 10) : "";
+}
+
 export default async function AdminPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const currentUser = await requireAdmin();
   const params = await searchParams;
@@ -44,9 +48,13 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         email: editingEmployeeRaw.email || "",
         title: editingEmployeeRaw.title,
         teamId: editingEmployeeRaw.teamId || "",
-        apvDate: editingEmployeeRaw.apvDate ? editingEmployeeRaw.apvDate.toISOString().slice(0, 10) : "",
-        id06Date: editingEmployeeRaw.id06Date ? editingEmployeeRaw.id06Date.toISOString().slice(0, 10) : "",
+        apvDate: formatDate(editingEmployeeRaw.apvDate),
+        apvExpiryDate: formatDate(editingEmployeeRaw.apvExpiryDate),
+        id06Date: formatDate(editingEmployeeRaw.id06Date),
+        id06ExpiryDate: formatDate(editingEmployeeRaw.id06ExpiryDate),
         otherCompetence: editingEmployeeRaw.otherCompetence || "",
+        otherCompetenceDate: formatDate(editingEmployeeRaw.otherCompetenceDate),
+        otherCompetenceExpiryDate: formatDate(editingEmployeeRaw.otherCompetenceExpiryDate),
       }
     : null;
 
@@ -111,9 +119,15 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
                 <p className="item-meta">{employee.address || "Ingen adress"}</p>
                 <p className="item-meta">
                   {[
-                    employee.apvDate ? `APV: ${employee.apvDate.toISOString().slice(0, 10)}` : null,
-                    employee.id06Date ? `ID06: ${employee.id06Date.toISOString().slice(0, 10)}` : null,
-                    employee.otherCompetence ? `Övrigt: ${employee.otherCompetence}` : null,
+                    employee.apvDate
+                      ? `APV: utbildningsdatum ${formatDate(employee.apvDate)}${employee.apvExpiryDate ? `, förfaller ${formatDate(employee.apvExpiryDate)}` : ""}`
+                      : null,
+                    employee.id06Date
+                      ? `ID06: utbildningsdatum ${formatDate(employee.id06Date)}${employee.id06ExpiryDate ? `, förfaller ${formatDate(employee.id06ExpiryDate)}` : ""}`
+                      : null,
+                    employee.otherCompetence
+                      ? `Övrigt: ${employee.otherCompetence}${employee.otherCompetenceDate ? `, utbildningsdatum ${formatDate(employee.otherCompetenceDate)}` : ""}${employee.otherCompetenceExpiryDate ? `, förfaller ${formatDate(employee.otherCompetenceExpiryDate)}` : ""}`
+                      : null,
                   ].filter(Boolean).join(" · ") || "Inga kompetenser angivna"}
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">

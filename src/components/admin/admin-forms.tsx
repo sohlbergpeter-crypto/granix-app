@@ -27,8 +27,12 @@ type EditingEmployee = {
   title: string;
   teamId: string;
   apvDate: string;
+  apvExpiryDate: string;
   id06Date: string;
+  id06ExpiryDate: string;
   otherCompetence: string;
+  otherCompetenceDate: string;
+  otherCompetenceExpiryDate: string;
 };
 
 function Message({ state }: { state: { error?: string; ok?: boolean } | null }) {
@@ -123,16 +127,22 @@ export function AdminForms({
                 <input name="hasApv" type="checkbox" defaultChecked={Boolean(editingEmployee?.apvDate)} />
                 <span>APV</span>
               </label>
-              <Field label="Datum APV"><Input name="apvDate" type="date" defaultValue={editingEmployee?.apvDate || ""} /></Field>
+              <Field label="Utbildningsdatum APV"><Input name="apvDate" type="date" defaultValue={editingEmployee?.apvDate || ""} /></Field>
+              <Field label="Förfaller APV"><Input name="apvExpiryDate" type="date" defaultValue={editingEmployee?.apvExpiryDate || ""} /></Field>
             </div>
             <div className="field-row">
               <label className="flex items-center gap-2 text-[#1b2b31]">
                 <input name="hasId06" type="checkbox" defaultChecked={Boolean(editingEmployee?.id06Date)} />
                 <span>ID06</span>
               </label>
-              <Field label="Datum ID06"><Input name="id06Date" type="date" defaultValue={editingEmployee?.id06Date || ""} /></Field>
+              <Field label="Utbildningsdatum ID06"><Input name="id06Date" type="date" defaultValue={editingEmployee?.id06Date || ""} /></Field>
+              <Field label="Förfaller ID06"><Input name="id06ExpiryDate" type="date" defaultValue={editingEmployee?.id06ExpiryDate || ""} /></Field>
             </div>
             <Field label="Övrigt"><Input name="otherCompetence" placeholder="Övrig kompetens eller certifiering" defaultValue={editingEmployee?.otherCompetence || ""} /></Field>
+            <div className="field-row">
+              <Field label="Utbildningsdatum övrigt"><Input name="otherCompetenceDate" type="date" defaultValue={editingEmployee?.otherCompetenceDate || ""} /></Field>
+              <Field label="Förfaller övrigt"><Input name="otherCompetenceExpiryDate" type="date" defaultValue={editingEmployee?.otherCompetenceExpiryDate || ""} /></Field>
+            </div>
           </div>
           <Message state={employeeState} />
           <Button variant="secondary" type="submit">{editingEmployee ? "Spara ändringar" : "Lägg till anställd"}</Button>

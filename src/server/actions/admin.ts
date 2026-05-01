@@ -42,9 +42,13 @@ export async function createEmployeeAction(_: unknown, formData: FormData) {
     teamId: formData.get("teamId"),
     hasApv: formData.get("hasApv") === "on",
     apvDate: formData.get("apvDate"),
+    apvExpiryDate: formData.get("apvExpiryDate"),
     hasId06: formData.get("hasId06") === "on",
     id06Date: formData.get("id06Date"),
+    id06ExpiryDate: formData.get("id06ExpiryDate"),
     otherCompetence: formData.get("otherCompetence"),
+    otherCompetenceDate: formData.get("otherCompetenceDate"),
+    otherCompetenceExpiryDate: formData.get("otherCompetenceExpiryDate"),
   });
   if (!parsed.success) return { error: parsed.error.errors[0]?.message || "Anställd kunde inte sparas." };
 
@@ -57,8 +61,12 @@ export async function createEmployeeAction(_: unknown, formData: FormData) {
       phone: parsed.data.phone || null,
       teamId: parsed.data.teamId || null,
       apvDate: parsed.data.hasApv && parsed.data.apvDate ? new Date(`${parsed.data.apvDate}T00:00:00.000`) : null,
+      apvExpiryDate: parsed.data.hasApv && parsed.data.apvExpiryDate ? new Date(`${parsed.data.apvExpiryDate}T00:00:00.000`) : null,
       id06Date: parsed.data.hasId06 && parsed.data.id06Date ? new Date(`${parsed.data.id06Date}T00:00:00.000`) : null,
+      id06ExpiryDate: parsed.data.hasId06 && parsed.data.id06ExpiryDate ? new Date(`${parsed.data.id06ExpiryDate}T00:00:00.000`) : null,
       otherCompetence: parsed.data.otherCompetence || null,
+      otherCompetenceDate: parsed.data.otherCompetence && parsed.data.otherCompetenceDate ? new Date(`${parsed.data.otherCompetenceDate}T00:00:00.000`) : null,
+      otherCompetenceExpiryDate: parsed.data.otherCompetence && parsed.data.otherCompetenceExpiryDate ? new Date(`${parsed.data.otherCompetenceExpiryDate}T00:00:00.000`) : null,
       skills: [
         ...(parsed.data.hasApv ? ["APV"] : []),
         ...(parsed.data.hasId06 ? ["ID06"] : []),
@@ -85,9 +93,13 @@ export async function updateEmployeeAction(_: unknown, formData: FormData) {
     teamId: formData.get("teamId"),
     hasApv: formData.get("hasApv") === "on",
     apvDate: formData.get("apvDate"),
+    apvExpiryDate: formData.get("apvExpiryDate"),
     hasId06: formData.get("hasId06") === "on",
     id06Date: formData.get("id06Date"),
+    id06ExpiryDate: formData.get("id06ExpiryDate"),
     otherCompetence: formData.get("otherCompetence"),
+    otherCompetenceDate: formData.get("otherCompetenceDate"),
+    otherCompetenceExpiryDate: formData.get("otherCompetenceExpiryDate"),
   });
   if (!parsed.success) return { error: parsed.error.errors[0]?.message || "Anställd kunde inte uppdateras." };
 
@@ -102,8 +114,12 @@ export async function updateEmployeeAction(_: unknown, formData: FormData) {
       title: parsed.data.title,
       teamId: parsed.data.teamId || null,
       apvDate: parsed.data.hasApv && parsed.data.apvDate ? new Date(`${parsed.data.apvDate}T00:00:00.000`) : null,
+      apvExpiryDate: parsed.data.hasApv && parsed.data.apvExpiryDate ? new Date(`${parsed.data.apvExpiryDate}T00:00:00.000`) : null,
       id06Date: parsed.data.hasId06 && parsed.data.id06Date ? new Date(`${parsed.data.id06Date}T00:00:00.000`) : null,
+      id06ExpiryDate: parsed.data.hasId06 && parsed.data.id06ExpiryDate ? new Date(`${parsed.data.id06ExpiryDate}T00:00:00.000`) : null,
       otherCompetence: parsed.data.otherCompetence || null,
+      otherCompetenceDate: parsed.data.otherCompetence && parsed.data.otherCompetenceDate ? new Date(`${parsed.data.otherCompetenceDate}T00:00:00.000`) : null,
+      otherCompetenceExpiryDate: parsed.data.otherCompetence && parsed.data.otherCompetenceExpiryDate ? new Date(`${parsed.data.otherCompetenceExpiryDate}T00:00:00.000`) : null,
       skills: [
         ...(parsed.data.hasApv ? ["APV"] : []),
         ...(parsed.data.hasId06 ? ["ID06"] : []),

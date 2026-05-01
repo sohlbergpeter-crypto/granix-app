@@ -56,22 +56,54 @@ export const employeeSchema = z.object({
   teamId: optionalText,
   hasApv: z.coerce.boolean().default(false),
   apvDate: optionalText,
+  apvExpiryDate: optionalText,
   hasId06: z.coerce.boolean().default(false),
   id06Date: optionalText,
+  id06ExpiryDate: optionalText,
   otherCompetence: optionalText,
+  otherCompetenceDate: optionalText,
+  otherCompetenceExpiryDate: optionalText,
 }).superRefine((data, ctx) => {
   if (data.hasApv && !data.apvDate) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ["apvDate"],
-      message: "Välj datum för APV.",
+      message: "Välj utbildningsdatum för APV.",
+    });
+  }
+  if (data.hasApv && !data.apvExpiryDate) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["apvExpiryDate"],
+      message: "Välj förfallodatum för APV.",
     });
   }
   if (data.hasId06 && !data.id06Date) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ["id06Date"],
-      message: "Välj datum för ID06.",
+      message: "Välj utbildningsdatum för ID06.",
+    });
+  }
+  if (data.hasId06 && !data.id06ExpiryDate) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["id06ExpiryDate"],
+      message: "Välj förfallodatum för ID06.",
+    });
+  }
+  if (data.otherCompetence && !data.otherCompetenceDate) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["otherCompetenceDate"],
+      message: "Välj utbildningsdatum för övrigt.",
+    });
+  }
+  if (data.otherCompetence && !data.otherCompetenceExpiryDate) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["otherCompetenceExpiryDate"],
+      message: "Välj förfallodatum för övrigt.",
     });
   }
 });

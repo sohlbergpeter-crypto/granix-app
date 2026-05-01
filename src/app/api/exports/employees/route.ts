@@ -3,6 +3,10 @@ import { PDFDocument, StandardFonts, rgb } from "pdf-lib/cjs";
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 
+function formatDate(value: Date | null | undefined) {
+  return value ? value.toISOString().slice(0, 10) : "";
+}
+
 export async function GET() {
   await requireAdmin();
 
@@ -52,9 +56,24 @@ export async function GET() {
     if (employee.phone) drawLine(`Telefon: ${employee.phone}`, 10);
     if (employee.email) drawLine(`E-post: ${employee.email}`, 10);
     drawLine(`Arbetslag: ${employee.team?.name || "Inget arbetslag"}`, 10);
-    if (employee.apvDate) drawLine(`APV: ${employee.apvDate.toISOString().slice(0, 10)}`, 10);
-    if (employee.id06Date) drawLine(`ID06: ${employee.id06Date.toISOString().slice(0, 10)}`, 10);
-    if (employee.otherCompetence) drawLine(`Övrigt: ${employee.otherCompetence}`.slice(0, 130), 10);
+    if (employee.apvDate) {
+      drawLine(
+        `APV: utbildningsdatum ${formatDate(employee.apvDate)}${employee.apvExpiryDate ? `, förfaller ${formatDate(employee.apvExpiryDate)}` : ""}`,
+        10,
+      );
+    }
+    if (employee.id06Date) {
+      drawLine(
+        `ID06: utbildningsdatum ${formatDate(employee.id06Date)}${employee.id06ExpiryDate ? `, förfaller ${formatDate(employee.id06ExpiryDate)}` : ""}`,
+        10,
+      );
+    }
+    if (employee.otherCompetence) {
+      drawLine(
+        `Övrigt: ${employee.otherCompetence}${employee.otherCompetenceDate ? `, utbildningsdatum ${formatDate(employee.otherCompetenceDate)}` : ""}${employee.otherCompetenceExpiryDate ? `, förfaller ${formatDate(employee.otherCompetenceExpiryDate)}` : ""}`.slice(0, 130),
+        10,
+      );
+    }
     y -= 8;
   }
 

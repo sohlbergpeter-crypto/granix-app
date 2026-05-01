@@ -94,8 +94,12 @@ model Employee {
   title       String
   skills      String[]          @default([])
   apvDate     DateTime?
+  apvExpiryDate DateTime?
   id06Date    DateTime?
+  id06ExpiryDate DateTime?
   otherCompetence String?
+  otherCompetenceDate DateTime?
+  otherCompetenceExpiryDate DateTime?
   teamId      String?
   team        Team?             @relation(fields: [teamId], references: [id], onDelete: SetNull)
   users       User[]
