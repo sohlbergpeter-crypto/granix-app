@@ -62,6 +62,7 @@ export default async function DiaryPage({ searchParams }: { searchParams: Promis
       filterFrom={params.from || ""}
       filterTo={params.to || ""}
       filterEmployeeId={employeeId}
+      filterProjectId={params.projectId || ""}
     />
   );
 }

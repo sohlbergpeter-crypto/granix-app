@@ -64,6 +64,7 @@ export default async function TimeReportsPage({ searchParams }: { searchParams: 
       filterFrom={params.from || ""}
       filterTo={params.to || ""}
       filterEmployeeId={employeeId}
+      filterProjectId={params.projectId || ""}
     />
   );
 }

@@ -103,6 +103,7 @@ export function TimeReportModule({
   filterFrom,
   filterTo,
   filterEmployeeId,
+  filterProjectId,
 }: {
   projects: Option[];
   employees: Option[];
@@ -112,6 +113,7 @@ export function TimeReportModule({
   filterFrom: string;
   filterTo: string;
   filterEmployeeId: string;
+  filterProjectId: string;
 }) {
   const [state, action, pending] = useActionState(saveTimeReportAction, null);
   const [form, setForm] = useState<EditableReport>(emptyForm);
@@ -303,12 +305,19 @@ export function TimeReportModule({
                     {employees.map((employee) => <option key={employee.id} value={employee.id}>{employee.name}</option>)}
                   </select>
                 </label>
+                <label className="field">
+                  <span>Projekt</span>
+                  <select name="projectId" defaultValue={filterProjectId}>
+                    <option value="">Alla projekt</option>
+                    {projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}
+                  </select>
+                </label>
               </div>
               <div className="flex flex-wrap gap-3">
                 <button className="secondary-button" type="submit">Visa period</button>
                 <Link
                   className="ghost-button"
-                  href={withBasePath(`/api/exports/time-reports?from=${encodeURIComponent(filterFrom)}&to=${encodeURIComponent(filterTo)}&employeeId=${encodeURIComponent(filterEmployeeId)}`)}
+                  href={withBasePath(`/api/exports/time-reports?from=${encodeURIComponent(filterFrom)}&to=${encodeURIComponent(filterTo)}&employeeId=${encodeURIComponent(filterEmployeeId)}&projectId=${encodeURIComponent(filterProjectId)}`)}
                 >
                   Ladda ned sammanställning
                 </Link>

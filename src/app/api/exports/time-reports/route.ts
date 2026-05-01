@@ -1,5 +1,3 @@
-import { readFile } from "node:fs/promises";
-import path from "node:path";
 import { NextRequest, NextResponse } from "next/server";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib/cjs";
 import { db } from "@/lib/db";
@@ -24,12 +22,14 @@ export async function GET(request: NextRequest) {
   const fromRaw = request.nextUrl.searchParams.get("from");
   const toRaw = request.nextUrl.searchParams.get("to");
   const employeeId = request.nextUrl.searchParams.get("employeeId");
+  const projectId = request.nextUrl.searchParams.get("projectId");
   const from = parseDate(fromRaw);
   const to = parseDate(toRaw, true);
 
   const reports = await db.timeReport.findMany({
     where: {
       ...(employeeId ? { employeeId } : {}),
+      ...(projectId ? { projectId } : {}),
       ...(from || to
         ? {
             date: {
@@ -47,19 +47,21 @@ export async function GET(request: NextRequest) {
   const page = pdf.addPage([595.28, 841.89]);
   const font = await pdf.embedFont(StandardFonts.Helvetica);
   const boldFont = await pdf.embedFont(StandardFonts.HelveticaBold);
-  const logoBytes = await readFile(path.join(process.cwd(), "public", "brand", "granix-logo.png"));
-  const logo = await pdf.embedPng(logoBytes);
-  const logoDims = logo.scale(0.18);
 
   let y = 800;
-  page.drawImage(logo, { x: 40, y: y - logoDims.height, width: logoDims.width, height: logoDims.height });
-  y -= 70;
-
   page.drawText("Granix - Tidrapport", { x: 40, y, size: 20, font: boldFont, color: rgb(0.1, 0.17, 0.19) });
   y -= 22;
   page.drawText(`Period: ${formatPeriod(fromRaw, toRaw)}`, { x: 40, y, size: 11, font, color: rgb(0.35, 0.44, 0.48) });
   y -= 16;
   page.drawText(`Vald person: ${reports[0]?.employee.name && employeeId ? reports[0].employee.name : employeeId ? "Ingen träff" : "Alla anställda"}`, {
+    x: 40,
+    y,
+    size: 11,
+    font,
+    color: rgb(0.35, 0.44, 0.48),
+  });
+  y -= 16;
+  page.drawText(`Valt projekt: ${reports[0]?.project.name && projectId ? reports[0].project.name : projectId ? "Ingen träff" : "Alla projekt"}`, {
     x: 40,
     y,
     size: 11,
