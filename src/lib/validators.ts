@@ -47,8 +47,9 @@ export const userSchema = z.object({
 });
 
 export const employeeSchema = z.object({
-  name: z.string().trim().min(2),
-  personalNumber: z.string().trim().min(6, "Ange personnummer."),
+  firstName: z.string().trim().min(2, "Ange förnamn."),
+  lastName: z.string().trim().min(2, "Ange efternamn."),
+  personalNumber: z.string().trim().regex(/^\d{8}-\d{4}$/, "Ange personnummer som YYYYMMDD-XXXX."),
   address: z.string().trim().min(2, "Ange adress."),
   phone: z.string().trim().min(6, "Ange telefonnummer."),
   email: z.string().trim().email("Ange giltig e-post."),

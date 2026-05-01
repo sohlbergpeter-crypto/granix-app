@@ -11,6 +11,20 @@ function formatDate(value: Date | null | undefined) {
   return value ? value.toISOString().slice(0, 10) : "";
 }
 
+function splitEmployeeName(name: string) {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length <= 1) {
+    return {
+      firstName: parts[0] || "",
+      lastName: "",
+    };
+  }
+  return {
+    firstName: parts.slice(0, -1).join(" "),
+    lastName: parts.slice(-1).join(" "),
+  };
+}
+
 export default async function AdminPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const currentUser = await requireAdmin();
   const params = await searchParams;
@@ -38,10 +52,12 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   ]);
 
   const editingEmployeeRaw = editEmployeeId ? employees.find((employee) => employee.id === editEmployeeId) : null;
+  const splitName = editingEmployeeRaw ? splitEmployeeName(editingEmployeeRaw.name) : null;
   const editingEmployee = editingEmployeeRaw
     ? {
         id: editingEmployeeRaw.id,
-        name: editingEmployeeRaw.name,
+        firstName: splitName?.firstName || "",
+        lastName: splitName?.lastName || "",
         personalNumber: editingEmployeeRaw.personalNumber || "",
         address: editingEmployeeRaw.address || "",
         phone: editingEmployeeRaw.phone || "",

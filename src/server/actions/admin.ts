@@ -6,6 +6,10 @@ import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { employeeSchema, machineSchema, teamSchema, userSchema, vehicleSchema } from "@/lib/validators";
 
+function buildEmployeeName(firstName: string, lastName: string) {
+  return `${firstName.trim()} ${lastName.trim()}`.trim();
+}
+
 export async function createUserAction(_: unknown, formData: FormData) {
   await requireAdmin();
   const parsed = userSchema.safeParse({
@@ -33,7 +37,8 @@ export async function createUserAction(_: unknown, formData: FormData) {
 export async function createEmployeeAction(_: unknown, formData: FormData) {
   await requireAdmin();
   const parsed = employeeSchema.safeParse({
-    name: formData.get("name"),
+    firstName: formData.get("firstName"),
+    lastName: formData.get("lastName"),
     personalNumber: formData.get("personalNumber"),
     address: formData.get("address"),
     phone: formData.get("phone"),
@@ -52,11 +57,12 @@ export async function createEmployeeAction(_: unknown, formData: FormData) {
 
   await db.employee.create({
     data: {
-      ...parsed.data,
+      name: buildEmployeeName(parsed.data.firstName, parsed.data.lastName),
       personalNumber: parsed.data.personalNumber,
       address: parsed.data.address,
       email: parsed.data.email || null,
       phone: parsed.data.phone || null,
+      title: parsed.data.title,
       teamId: parsed.data.teamId || null,
       apvDate: parsed.data.hasApv && parsed.data.apvDate ? new Date(`${parsed.data.apvDate}T00:00:00.000`) : null,
       apvExpiryDate: parsed.data.hasApv && parsed.data.apvExpiryDate ? new Date(`${parsed.data.apvExpiryDate}T00:00:00.000`) : null,
@@ -82,7 +88,8 @@ export async function updateEmployeeAction(_: unknown, formData: FormData) {
   if (!id) return { error: "Ingen anställd angavs." };
 
   const parsed = employeeSchema.safeParse({
-    name: formData.get("name"),
+    firstName: formData.get("firstName"),
+    lastName: formData.get("lastName"),
     personalNumber: formData.get("personalNumber"),
     address: formData.get("address"),
     phone: formData.get("phone"),
@@ -102,7 +109,7 @@ export async function updateEmployeeAction(_: unknown, formData: FormData) {
   await db.employee.update({
     where: { id },
     data: {
-      name: parsed.data.name,
+      name: buildEmployeeName(parsed.data.firstName, parsed.data.lastName),
       personalNumber: parsed.data.personalNumber,
       address: parsed.data.address,
       email: parsed.data.email || null,

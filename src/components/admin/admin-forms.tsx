@@ -19,7 +19,8 @@ type Option = { id: string; name: string };
 
 type EditingEmployee = {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   personalNumber: string;
   address: string;
   phone: string;
@@ -100,9 +101,12 @@ export function AdminForms({
         </div>
         <form action={employeeAction} className="planning-form">
           {editingEmployee ? <input type="hidden" name="id" value={editingEmployee.id} /> : null}
-          <Field label="Namn"><Input name="name" defaultValue={editingEmployee?.name || ""} required /></Field>
           <div className="field-row">
-            <Field label="Personnummer"><Input name="personalNumber" defaultValue={editingEmployee?.personalNumber || ""} required /></Field>
+            <Field label="Förnamn"><Input name="firstName" defaultValue={editingEmployee?.firstName || ""} required /></Field>
+            <Field label="Efternamn"><Input name="lastName" defaultValue={editingEmployee?.lastName || ""} required /></Field>
+          </div>
+          <div className="field-row">
+            <Field label="Personnummer"><Input name="personalNumber" placeholder="19840324-6280" defaultValue={editingEmployee?.personalNumber || ""} required /></Field>
             <Field label="Adress"><Input name="address" defaultValue={editingEmployee?.address || ""} required /></Field>
           </div>
           <div className="field-row">
