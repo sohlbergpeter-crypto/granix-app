@@ -23,62 +23,74 @@ export default async function AdminPage() {
 
       <AdminForms teams={teams} employees={employees} />
 
-      <section className="grid gap-4 xl:grid-cols-2">
-        <Card>
+      <section className="admin-grid">
+        <Card className="glass-card">
           <div className="mb-4">
             <p className="eyebrow">Katalog</p>
             <CardTitle>Användarkonton</CardTitle>
           </div>
-          <div className="grid gap-3">
+          <div className="directory-list">
             {users.map((user) => (
-              <div key={user.id} className="rounded-[20px] border border-[rgba(20,51,58,0.08)] bg-[rgba(255,255,255,0.92)] p-4">
-                <p className="font-bold text-[#1b2b31]">{user.username} <span className="text-xs text-[#115e59]">{user.role}</span></p>
-                <p className="mt-1 text-sm text-[#59707a]">{user.email || "Ingen e-post"} · {user.employee?.name || "Ingen anställd kopplad"}</p>
+              <div key={user.id} className="directory-item">
+                <div className="directory-top">
+                  <p className="item-title">{user.username}</p>
+                  <span className="type-badge">{user.role}</span>
+                </div>
+                <p className="item-meta">{user.email || "Ingen e-post"} · {user.employee?.name || "Ingen anställd kopplad"}</p>
               </div>
             ))}
           </div>
         </Card>
 
-        <Card>
+        <Card className="glass-card">
           <div className="mb-4">
             <p className="eyebrow">Katalog</p>
             <CardTitle>Anställda</CardTitle>
           </div>
-          <div className="grid gap-3">
+          <div className="directory-list">
             {employees.map((employee) => (
-              <div key={employee.id} className="rounded-[20px] border border-[rgba(20,51,58,0.08)] bg-[rgba(255,255,255,0.92)] p-4">
-                <p className="font-bold text-[#1b2b31]">{employee.name} <span className="text-xs text-[#59707a]">{employee.title}</span></p>
-                <p className="mt-1 text-sm text-[#59707a]">{employee.team?.name || "Inget team"} · {employee.phone || "Ingen telefon"}</p>
+              <div key={employee.id} className="directory-item">
+                <div className="directory-top">
+                  <p className="item-title">{employee.name}</p>
+                  <span className="type-badge">{employee.title}</span>
+                </div>
+                <p className="item-meta">{employee.team?.name || "Inget team"} · {employee.phone || "Ingen telefon"}</p>
               </div>
             ))}
           </div>
         </Card>
 
-        <Card>
+        <Card className="glass-card">
           <div className="mb-4">
             <p className="eyebrow">Katalog</p>
             <CardTitle>Maskiner</CardTitle>
           </div>
-          <div className="grid gap-3">
+          <div className="directory-list">
             {machines.map((machine) => (
-              <div key={machine.id} className="rounded-[20px] border border-[rgba(20,51,58,0.08)] bg-[rgba(255,255,255,0.92)] p-4">
-                <p className="font-bold text-[#1b2b31]">{machine.name}</p>
-                <p className="mt-1 text-sm text-[#59707a]">{machine.type} · {machine.status}</p>
+              <div key={machine.id} className="directory-item">
+                <div className="directory-top">
+                  <p className="item-title">{machine.name}</p>
+                  <span className="type-badge">{machine.status}</span>
+                </div>
+                <p className="item-meta">{machine.type}</p>
               </div>
             ))}
           </div>
         </Card>
 
-        <Card>
+        <Card className="glass-card">
           <div className="mb-4">
             <p className="eyebrow">Katalog</p>
             <CardTitle>Fordon</CardTitle>
           </div>
-          <div className="grid gap-3">
+          <div className="directory-list">
             {vehicles.map((vehicle) => (
-              <div key={vehicle.id} className="rounded-[20px] border border-[rgba(20,51,58,0.08)] bg-[rgba(255,255,255,0.92)] p-4">
-                <p className="font-bold text-[#1b2b31]">{vehicle.name}</p>
-                <p className="mt-1 text-sm text-[#59707a]">{vehicle.registrationNumber} · {vehicle.status}</p>
+              <div key={vehicle.id} className="directory-item">
+                <div className="directory-top">
+                  <p className="item-title">{vehicle.name}</p>
+                  <span className="type-badge">{vehicle.status}</span>
+                </div>
+                <p className="item-meta">{vehicle.registrationNumber}</p>
               </div>
             ))}
           </div>

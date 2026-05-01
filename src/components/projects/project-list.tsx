@@ -18,32 +18,28 @@ type ProjectListItem = {
 
 export function ProjectList({ projects }: { projects: ProjectListItem[] }) {
   if (!projects.length) {
-    return <Card className="text-[#59707a]">Inga projekt matchar filtret.</Card>;
+    return <Card className="glass-card text-[#59707a]">Inga projekt matchar filtret.</Card>;
   }
 
   return (
-    <div className="grid gap-3">
+    <div className="agenda-list">
       {projects.map((project) => (
-        <Link key={project.id} href={`/projects/${project.id}`}>
-          <Card className="border-[rgba(20,51,58,0.08)] bg-[rgba(255,255,255,0.92)] p-4 transition hover:-translate-y-0.5" style={{ borderLeft: `6px solid ${project.color}` }}>
-            <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full bg-[rgba(20,51,58,0.08)] px-2.5 py-1 text-xs font-bold text-[#1b2b31]">{project.projectNumber}</span>
-                  <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${isActiveProjectStatus(project.status) ? "bg-[rgba(15,118,110,0.12)] text-[#115e59]" : "bg-[rgba(239,68,68,0.12)] text-[#b91c1c]"}`}>
-                    {project.status}
-                  </span>
-                  <span className="rounded-full border border-[rgba(20,51,58,0.12)] px-2.5 py-1 text-xs font-bold text-[#59707a]">v.{weekNumber(project.startDate)}</span>
-                </div>
-                <h3 className="mt-2 text-base font-bold text-[#1b2b31]">{project.name}</h3>
-                <p className="mt-1 text-sm text-[#59707a]">{project.customerName} · {project.city}</p>
+        <Link key={project.id} href={`/projects/${project.id}`} className="agenda-item" style={{ borderLeft: `6px solid ${project.color}` }}>
+          <div className="agenda-top">
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="type-badge">{project.projectNumber}</span>
+                <span className={`status-badge ${isActiveProjectStatus(project.status) ? "status-pagaende" : "status-avslutad"}`}>{project.status}</span>
+                <span className="type-badge">v.{weekNumber(project.startDate)}</span>
               </div>
-              <div className="text-sm text-[#59707a] md:text-right">
-                <p>{formatDate(project.startDate)} - {formatDate(project.endDate)}</p>
-                <p>{project.employees.map((entry) => entry.employee.name).join(", ") || "Ingen personal kopplad"}</p>
-              </div>
+              <p className="item-title mt-2">{project.name}</p>
+              <p className="item-meta">{project.customerName} · {project.city}</p>
             </div>
-          </Card>
+            <div className="text-right text-sm text-[#59707a]">
+              <p>{formatDate(project.startDate)} till {formatDate(project.endDate)}</p>
+              <p>{project.employees.map((entry) => entry.employee.name).join(", ") || "Ingen personal kopplad"}</p>
+            </div>
+          </div>
         </Link>
       ))}
     </div>

@@ -39,25 +39,34 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
         <div>
           <p className="eyebrow">Projekt</p>
           <h1 className="text-[1.8rem] font-black text-[#1b2b31]">Projekt och tidslinjer</h1>
-          <p className="mt-2 text-[#59707a]">Sök, filtrera och öppna projektdetaljer.</p>
+          <p className="mt-2 text-[#59707a]">Sök, filtrera och öppna projektdetaljer med samma visuella struktur som i planeringen.</p>
         </div>
-        {user.role === "admin" && <Link href="/projects/new"><Button type="button">Lägg till projekt</Button></Link>}
+        {user.role === "admin" ? (
+          <Link href="/projects/new">
+            <Button type="button">Lägg till projekt</Button>
+          </Link>
+        ) : null}
       </section>
 
-      <Card>
-        <div className="mb-4">
-          <p className="eyebrow">Styrning</p>
-          <CardTitle>Filter och arbetsläge</CardTitle>
+      <Card className="glass-card">
+        <div className="card-header">
+          <div>
+            <p className="eyebrow">Styrning</p>
+            <CardTitle>Filter och arbetsläge</CardTitle>
+          </div>
         </div>
-        <form className="grid gap-3 lg:grid-cols-[1fr_220px_220px_auto]">
-          <Input name="q" placeholder="Titel, kund, adress eller projektnummer" defaultValue={query} />
-          <Select name="status" defaultValue={status}>
-            <option value="alla">Alla statusar</option>
-            {Object.values(ProjectStatus).map((entry) => <option key={entry} value={entry}>{entry}</option>)}
-          </Select>
-          <Input name="city" placeholder="Ort" defaultValue={city} />
-          <Button variant="ghost" type="submit">Filtrera</Button>
-        </form>
+        <div className="stack-block">
+          <p className="dashboard-note">Filtrera fram rätt projekt, ort och status innan du öppnar detaljsidan eller tidslinjen.</p>
+          <form className="filters-layout">
+            <Input name="q" placeholder="Titel, kund, adress eller projektnummer" defaultValue={query} />
+            <Select name="status" defaultValue={status}>
+              <option value="alla">Alla statusar</option>
+              {Object.values(ProjectStatus).map((entry) => <option key={entry} value={entry}>{entry}</option>)}
+            </Select>
+            <Input name="city" placeholder="Ort" defaultValue={city} />
+            <Button variant="ghost" type="submit">Filtrera</Button>
+          </form>
+        </div>
       </Card>
 
       <ProjectList projects={projects} />

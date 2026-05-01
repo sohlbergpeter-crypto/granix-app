@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth";
 import { LoginForm } from "./login-form";
@@ -10,17 +11,18 @@ export default async function LoginPage() {
     <section className="login-screen">
       <div className="login-shell">
         <div className="login-copy">
-          <p className="eyebrow">Internt planeringssystem</p>
+          <div className="login-kicker">Granix internt system</div>
           <div className="brand-wordmark">
-            <span className="brand-mark">G</span>
-            <div>
-              <h1 className="text-[4rem] font-black leading-none tracking-tight text-[#1b2b31]">GRANIX</h1>
-              <p className="mt-2 text-sm font-bold uppercase tracking-[0.18em] text-[#115e59]">Planering och rapportering</p>
-            </div>
+            <Image src="/brand/granix-logo.png" alt="Granix" width={900} height={353} className="brand-logo" priority />
           </div>
           <p className="hero-copy">
-            Lokal planering med inloggning, projektstyrning, veckonummer och administration av användare samt anställda.
+            Planering, projektstyrning, tidrapportering och dagbok i samma system. Logga in för att se kalender, aktiva projekt och administration.
           </p>
+          <div className="hero-meta">
+            <span className="hero-meta-chip">Veckonummer tydligt i planeringen</span>
+            <span className="hero-meta-chip">Projekt, resurser och rapportering</span>
+            <span className="hero-meta-chip">Delad data för hela företaget</span>
+          </div>
         </div>
         <LoginForm />
       </div>

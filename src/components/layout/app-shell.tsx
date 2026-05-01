@@ -1,6 +1,8 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Role } from "@prisma/client";
 import { logoutAction } from "@/server/actions/auth";
+import { ViewSwitcher } from "@/components/layout/view-switcher";
 
 export function AppShell({
   user,
@@ -9,21 +11,30 @@ export function AppShell({
   user: { username: string; role: Role };
   children: React.ReactNode;
 }) {
+  const navItems = [
+    { href: "/dashboard", label: "Planering" },
+    { href: "/time-reports", label: "Tidrapportering" },
+    { href: "/diary", label: "Dagbok" },
+    { href: "/projects", label: "Projekt" },
+    ...(user.role === "admin" ? [{ href: "/admin", label: "Admin" }] : []),
+  ];
+
   return (
     <main className="app-shell">
       <section className="hero">
         <div>
           <p className="eyebrow">Internt planeringssystem</p>
           <Link href="/dashboard" className="brand-wordmark">
-            <span className="brand-mark">G</span>
-            <span>
-              <span className="block text-[3rem] font-black leading-none tracking-tight text-[#1b2b31]">GRANIX</span>
-              <span className="mt-2 block text-sm font-bold uppercase tracking-[0.18em] text-[#115e59]">Planering</span>
-            </span>
+            <Image src="/brand/granix-logo.png" alt="Granix" width={900} height={353} className="brand-logo" priority />
           </Link>
           <p className="hero-copy">
-            Veckobaserad planering för team, projekt och uppföljning. All data sparas i databasen och är delad mellan användare.
+            Veckobaserad planering för team, projekt och uppföljning. All data sparas i databasen och delas mellan användare med riktiga roller och inloggning.
           </p>
+          <div className="hero-meta">
+            <span className="hero-meta-chip">Planering med tydliga veckonummer</span>
+            <span className="hero-meta-chip">Tidrapportering och dagbok i samma system</span>
+            <span className="hero-meta-chip">Granix intern överblick i realtid</span>
+          </div>
         </div>
 
         <div className="hero-actions">
@@ -31,20 +42,13 @@ export function AppShell({
             <span className="font-bold text-[#1b2b31]">{user.username}</span>
             <span className="type-badge">{user.role}</span>
           </div>
-          <Link href="/dashboard" className="secondary-button">Planering</Link>
-          <Link href="/projects" className="ghost-button">Projekt</Link>
-          {user.role === "admin" ? <Link href="/admin" className="ghost-button">Administration</Link> : null}
           <form action={logoutAction}>
             <button className="ghost-button" type="submit">Logga ut</button>
           </form>
         </div>
       </section>
 
-      <section className="view-switcher">
-        <Link href="/dashboard" className="secondary-button is-active">Planering</Link>
-        <Link href="/projects" className="ghost-button">Projekt</Link>
-        {user.role === "admin" ? <Link href="/admin" className="ghost-button">Administration</Link> : null}
-      </section>
+      <ViewSwitcher items={navItems} />
 
       {children}
     </main>

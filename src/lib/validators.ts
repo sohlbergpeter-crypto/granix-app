@@ -1,4 +1,4 @@
-import { ProjectStatus, ResourceStatus, Role } from "@prisma/client";
+import { AllowanceType, ProjectStatus, ResourceStatus, Role } from "@prisma/client";
 import { z } from "zod";
 
 const optionalText = z.string().trim().optional().or(z.literal(""));
@@ -70,4 +70,24 @@ export const vehicleSchema = z.object({
   name: z.string().trim().min(2),
   registrationNumber: z.string().trim().min(2),
   status: z.nativeEnum(ResourceStatus),
+});
+
+export const timeReportSchema = z.object({
+  id: z.string().optional(),
+  date: z.coerce.date(),
+  projectId: z.string().trim().min(1, "Välj projekt."),
+  hours: z.coerce.number().min(0.5, "Ange minst 0.5 timmar."),
+  travelWithinHours: z.coerce.number().min(0).default(0),
+  travelOutsideHours: z.coerce.number().min(0).default(0),
+  allowance: z.nativeEnum(AllowanceType),
+  notes: z.string().trim().min(3, "Beskriv vilket jobb som utförts."),
+});
+
+export const diaryEntrySchema = z.object({
+  id: z.string().optional(),
+  date: z.coerce.date(),
+  projectId: z.string().trim().min(1, "Välj projekt."),
+  happenedToday: z.string().trim().min(3, "Beskriv vad som händer idag."),
+  completedToday: z.string().trim().min(3, "Beskriv vad som är utfört."),
+  extraWork: optionalText,
 });

@@ -30,17 +30,17 @@ export function AdminForms({ teams, employees }: { teams: Option[]; employees: O
   const [vehicleState, vehicleAction] = useActionState(createVehicleAction, null);
 
   return (
-    <div className="grid gap-4 xl:grid-cols-2">
-      <Card>
+    <div className="admin-grid">
+      <Card className="glass-card">
         <div className="mb-4">
           <p className="eyebrow">Administration</p>
           <CardTitle>Nytt användarkonto</CardTitle>
         </div>
-        <form action={userAction} className="grid gap-3">
+        <form action={userAction} className="planning-form">
           <Field label="Användarnamn"><Input name="username" required /></Field>
           <Field label="E-post"><Input name="email" type="email" /></Field>
           <Field label="Lösenord"><Input name="password" type="password" minLength={6} required /></Field>
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="field-row">
             <Field label="Roll">
               <Select name="role" defaultValue={Role.user}>
                 <option value={Role.user}>User</option>
@@ -54,25 +54,25 @@ export function AdminForms({ teams, employees }: { teams: Option[]; employees: O
               </Select>
             </Field>
           </div>
-          <p className="text-sm text-[#59707a]">Om ingen anställd väljs skapas en ny anställd automatiskt för användaren.</p>
+          <p className="dashboard-note">Om ingen anställd väljs skapas en ny anställd automatiskt för användaren.</p>
           <Message state={userState} />
           <Button variant="secondary" type="submit">Lägg till användare</Button>
         </form>
       </Card>
 
-      <Card>
+      <Card className="glass-card">
         <div className="mb-4">
           <p className="eyebrow">Administration</p>
           <CardTitle>Ny anställd</CardTitle>
         </div>
-        <form action={employeeAction} className="grid gap-3">
+        <form action={employeeAction} className="planning-form">
           <Field label="Namn"><Input name="name" required /></Field>
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="field-row">
             <Field label="Telefon"><Input name="phone" /></Field>
             <Field label="E-post"><Input name="email" type="email" /></Field>
           </div>
-          <div className="grid gap-3 md:grid-cols-2">
-            <Field label="Roll/titel"><Input name="title" placeholder="Stensättare" required /></Field>
+          <div className="field-row">
+            <Field label="Roll eller titel"><Input name="title" placeholder="Stensättare" required /></Field>
             <Field label="Arbetslag">
               <Select name="teamId" defaultValue="">
                 <option value="">Inget arbetslag</option>
@@ -86,12 +86,12 @@ export function AdminForms({ teams, employees }: { teams: Option[]; employees: O
         </form>
       </Card>
 
-      <Card>
+      <Card className="glass-card">
         <div className="mb-4">
           <p className="eyebrow">Administration</p>
           <CardTitle>Nytt arbetslag</CardTitle>
         </div>
-        <form action={teamAction} className="grid gap-3">
+        <form action={teamAction} className="planning-form">
           <Field label="Namn"><Input name="name" required /></Field>
           <Field label="Beskrivning"><Textarea name="description" /></Field>
           <Message state={teamState} />
@@ -99,15 +99,15 @@ export function AdminForms({ teams, employees }: { teams: Option[]; employees: O
         </form>
       </Card>
 
-      <Card>
+      <Card className="glass-card">
         <div className="mb-4">
           <p className="eyebrow">Administration</p>
           <CardTitle>Resurser</CardTitle>
         </div>
-        <div className="grid gap-5">
-          <form action={machineAction} className="grid gap-3">
+        <div className="planning-form">
+          <form action={machineAction} className="planning-form">
             <h3 className="text-base font-bold text-[#1b2b31]">Ny maskin</h3>
-            <div className="grid gap-3 md:grid-cols-2">
+            <div className="field-row">
               <Field label="Namn"><Input name="name" required /></Field>
               <Field label="Typ"><Input name="type" required /></Field>
             </div>
@@ -120,9 +120,9 @@ export function AdminForms({ teams, employees }: { teams: Option[]; employees: O
             <Button variant="ghost" type="submit">Spara maskin</Button>
           </form>
 
-          <form action={vehicleAction} className="grid gap-3">
+          <form action={vehicleAction} className="planning-form">
             <h3 className="text-base font-bold text-[#1b2b31]">Nytt fordon</h3>
-            <div className="grid gap-3 md:grid-cols-2">
+            <div className="field-row">
               <Field label="Namn"><Input name="name" required /></Field>
               <Field label="Registreringsnummer"><Input name="registrationNumber" required /></Field>
             </div>

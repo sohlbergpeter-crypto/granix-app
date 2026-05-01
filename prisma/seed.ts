@@ -281,6 +281,55 @@ async function seedSampleData() {
       active: true,
     },
   });
+
+  const projectOne = await prisma.project.findUnique({ where: { id: "project-1" } });
+  if (projectOne) {
+    await prisma.timeReport.upsert({
+      where: { id: "time-report-1" },
+      update: {
+        employeeId: employees[0].id,
+        projectId: projectOne.id,
+        date: new Date(2026, 3, 19),
+        hours: 8,
+        travelWithinHours: 0,
+        travelOutsideHours: 1,
+        allowance: "halv",
+        notes: "Montering och förberedelser på plats.",
+      },
+      create: {
+        id: "time-report-1",
+        employeeId: employees[0].id,
+        projectId: projectOne.id,
+        date: new Date(2026, 3, 19),
+        hours: 8,
+        travelWithinHours: 0,
+        travelOutsideHours: 1,
+        allowance: "halv",
+        notes: "Montering och förberedelser på plats.",
+      },
+    });
+
+    await prisma.diaryEntry.upsert({
+      where: { id: "diary-entry-1" },
+      update: {
+        employeeId: employees[0].id,
+        projectId: projectOne.id,
+        date: new Date(2026, 3, 19),
+        happenedToday: "Etablering på plats och genomgång med kund.",
+        completedToday: "Första ytan uppmätt och underlag kontrollerat.",
+        extraWork: "Extra avgränsning runt entré utförd enligt önskemål.",
+      },
+      create: {
+        id: "diary-entry-1",
+        employeeId: employees[0].id,
+        projectId: projectOne.id,
+        date: new Date(2026, 3, 19),
+        happenedToday: "Etablering på plats och genomgång med kund.",
+        completedToday: "Första ytan uppmätt och underlag kontrollerat.",
+        extraWork: "Extra avgränsning runt entré utförd enligt önskemål.",
+      },
+    });
+  }
 }
 
 async function main() {

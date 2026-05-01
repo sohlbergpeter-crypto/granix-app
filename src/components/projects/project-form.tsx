@@ -51,41 +51,43 @@ export function ProjectForm({ project, teams, employees, machines, vehicles }: P
   const selectedVehicles = new Set(project?.vehicles.map((vehicle) => vehicle.vehicleId));
 
   return (
-    <Card className="p-5">
-      <div className="mb-4">
-        <p className="eyebrow">Projektregister</p>
-        <CardTitle>{project ? "Redigera projekt" : "Lägg till projekt"}</CardTitle>
+    <Card className="glass-card p-5">
+      <div className="card-header">
+        <div>
+          <p className="eyebrow">Projektregister</p>
+          <CardTitle>{project ? "Redigera projekt" : "Lägg till projekt"}</CardTitle>
+        </div>
       </div>
-      <form action={action} className="grid gap-4">
+      <form action={action} className="planning-form">
         <input type="hidden" name="id" value={project?.id || ""} />
         <Field label="Projektnamn"><Input name="name" defaultValue={project?.name} required /></Field>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="field-row">
           <Field label="Projektnummer"><Input name="projectNumber" defaultValue={project?.projectNumber} required /></Field>
           <Field label="Kundnamn"><Input name="customerName" defaultValue={project?.customerName} required /></Field>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="field-row">
           <Field label="Adress"><Input name="address" defaultValue={project?.address} required /></Field>
           <Field label="Ort"><Input name="city" defaultValue={project?.city} required /></Field>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="field-row">
           <Field label="Kontaktperson"><Input name="contactPerson" defaultValue={project?.contactPerson || ""} /></Field>
           <Field label="Telefon"><Input name="phone" defaultValue={project?.phone || ""} /></Field>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="field-row">
           <Field label="Startdatum"><Input name="startDate" type="date" defaultValue={dateValue(project?.startDate)} required /></Field>
           <Field label="Slutdatum"><Input name="endDate" type="date" defaultValue={dateValue(project?.endDate)} required /></Field>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="field-row">
           <Field label="Starttid"><Input name="startTime" type="time" defaultValue={project?.startTime || ""} /></Field>
           <Field label="Sluttid"><Input name="endTime" type="time" defaultValue={project?.endTime || ""} /></Field>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="field-row">
           <Field label="Status">
             <Select name="status" defaultValue={project?.status || "planerat"}>
               {Object.values(ProjectStatus).map((status) => <option key={status} value={status}>{status}</option>)}
@@ -94,7 +96,7 @@ export function ProjectForm({ project, teams, employees, machines, vehicles }: P
           <Field label="Projektfärg"><Input name="color" type="color" defaultValue={project?.color || "#0f766e"} /></Field>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="field-row">
           <Field label="Arbetslag">
             <Select name="teamId" defaultValue={project?.teamId || ""}>
               <option value="">Inget arbetslag</option>
@@ -107,7 +109,7 @@ export function ProjectForm({ project, teams, employees, machines, vehicles }: P
           </label>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="directory-grid">
           <Field label="Anställda">
             <Select name="employeeIds" multiple defaultValue={[...selectedEmployees]} className="min-h-36">
               {employees.map((employee) => <option key={employee.id} value={employee.id}>{employee.name}</option>)}
@@ -118,12 +120,13 @@ export function ProjectForm({ project, teams, employees, machines, vehicles }: P
               {machines.map((machine) => <option key={machine.id} value={machine.id}>{machine.name}</option>)}
             </Select>
           </Field>
-          <Field label="Fordon">
-            <Select name="vehicleIds" multiple defaultValue={[...selectedVehicles]} className="min-h-36">
-              {vehicles.map((vehicle) => <option key={vehicle.id} value={vehicle.id}>{vehicle.name}</option>)}
-            </Select>
-          </Field>
         </div>
+
+        <Field label="Fordon">
+          <Select name="vehicleIds" multiple defaultValue={[...selectedVehicles]} className="min-h-36">
+            {vehicles.map((vehicle) => <option key={vehicle.id} value={vehicle.id}>{vehicle.name}</option>)}
+          </Select>
+        </Field>
 
         <Field label="Intern anteckning"><Textarea name="internalNote" defaultValue={project?.internalNote || ""} /></Field>
         <Field label="Extern beskrivning"><Textarea name="externalDescription" defaultValue={project?.externalDescription || ""} /></Field>
@@ -136,7 +139,7 @@ export function ProjectForm({ project, teams, employees, machines, vehicles }: P
           </Select>
         </Field>
 
-        {state?.error && <p className="rounded-[20px] border border-[rgba(185,28,28,0.18)] bg-[rgba(239,68,68,0.08)] p-3 text-sm text-[#b91c1c]">{state.error}</p>}
+        {state?.error ? <p className="rounded-[20px] border border-[rgba(185,28,28,0.18)] bg-[rgba(239,68,68,0.08)] p-3 text-sm text-[#b91c1c]">{state.error}</p> : null}
         <div className="flex flex-wrap gap-3">
           <Button type="submit" disabled={pending}>{pending ? "Sparar..." : "Spara projekt"}</Button>
         </div>

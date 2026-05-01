@@ -84,6 +84,22 @@ button {
   padding: 1rem;
 }
 
+.login-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(20, 51, 58, 0.08);
+  color: var(--accent-strong);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .hero,
 .dashboard-grid,
 .workspace-grid,
@@ -135,6 +151,13 @@ button {
   gap: 0.8rem;
 }
 
+.brand-logo {
+  width: min(100%, 24rem);
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 16px 34px rgba(20, 51, 58, 0.15));
+}
+
 .brand-mark {
   display: grid;
   height: 4rem;
@@ -163,6 +186,26 @@ button {
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.78);
   border: 1px solid rgba(27, 43, 49, 0.1);
+}
+
+.hero-meta {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.hero-meta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid rgba(20, 51, 58, 0.08);
+  color: var(--text-soft);
+  font-size: 0.85rem;
+  font-weight: 700;
 }
 
 .glass-card {
@@ -325,9 +368,55 @@ button {
   gap: 0.85rem;
 }
 
+.field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.field > span {
+  color: var(--text-soft);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.field input,
+.field select,
+.field textarea {
+  min-height: 2.75rem;
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(27, 43, 49, 0.12);
+  background: rgba(255, 255, 255, 0.96);
+  padding: 0.7rem 0.85rem;
+  color: var(--text);
+  outline: none;
+}
+
+.field textarea {
+  min-height: 7rem;
+  resize: vertical;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: rgba(15, 118, 110, 0.4);
+  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
+}
+
 .filters-layout {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   align-items: end;
+}
+
+.stack-block {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.list-block {
+  display: grid;
+  gap: 0.75rem;
 }
 
 .field-row,
@@ -353,6 +442,48 @@ button {
   background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(20, 51, 58, 0.08);
   border-radius: var(--radius-md);
+}
+
+.empty-state {
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  border: 1px dashed rgba(20, 51, 58, 0.14);
+  background: rgba(255, 255, 255, 0.68);
+  color: var(--text-soft);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.dashboard-note {
+  color: var(--text-soft);
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+
+.summary-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.summary-chip {
+  padding: 0.95rem;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(20, 51, 58, 0.08);
+}
+
+.summary-chip strong {
+  display: block;
+  color: var(--text);
+  font-size: 1.15rem;
+}
+
+.summary-chip span {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--text-soft);
+  font-size: 0.82rem;
 }
 
 .detail-top,
@@ -496,6 +627,10 @@ button {
   .metrics-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 760px) {
@@ -518,6 +653,10 @@ button {
 
   .metrics-grid {
     grid-template-columns: 1fr;
+  }
+
+  .hero-meta {
+    flex-direction: column;
   }
 
   .fc .fc-toolbar {

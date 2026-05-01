@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { jwtVerify } from "jose";
 import { stripBasePath, withBasePath } from "@/lib/base-path";
 
-const protectedRoutes = ["/dashboard", "/projects", "/admin", "/files"];
+const protectedRoutes = ["/dashboard", "/projects", "/admin", "/files", "/time-reports", "/diary"];
 const adminRoutes = ["/admin", "/projects/new"];
 
 function secret() {
