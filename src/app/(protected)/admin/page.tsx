@@ -26,6 +26,29 @@ function splitEmployeeName(name: string) {
   };
 }
 
+function formatEmployeeCompetences(employee: {
+  apvDate: Date | null;
+  apvExpiryDate: Date | null;
+  id06Date: Date | null;
+  id06ExpiryDate: Date | null;
+  otherCompetence: string | null;
+  skills: string[];
+}) {
+  return [
+    employee.apvDate
+      ? `APV: utbildningsdatum ${formatDate(employee.apvDate)}${employee.apvExpiryDate ? `, förfaller ${formatDate(employee.apvExpiryDate)}` : ""}`
+      : employee.skills.includes("APV")
+        ? "APV"
+        : null,
+    employee.id06Date
+      ? `ID06: utbildningsdatum ${formatDate(employee.id06Date)}${employee.id06ExpiryDate ? `, förfaller ${formatDate(employee.id06ExpiryDate)}` : ""}`
+      : employee.skills.includes("ID06")
+        ? "ID06"
+        : null,
+    employee.otherCompetence ? `Övrigt: ${employee.otherCompetence}` : null,
+  ].filter(Boolean) as string[];
+}
+
 export default async function AdminPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const currentUser = await requireAdmin();
   const params = await searchParams;
@@ -133,26 +156,40 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
                   <p className="item-title">{employee.name}</p>
                   <span className="type-badge">{employee.title}</span>
                 </div>
-                <p className="item-meta">{employee.team?.name || "Inget team"} · {employee.phone || "Ingen telefon"}</p>
-                <p className="item-meta">{employee.personalNumber || "Inget personnummer"} · {employee.email || "Ingen e-post"}</p>
-                <p className="item-meta">
-                  {[employee.address, employee.postalCode, employee.city].filter(Boolean).join(", ") || "Ingen adress"}
-                </p>
-                <p className="item-meta">
-                  {[
-                    employee.apvDate
-                      ? `APV: utbildningsdatum ${formatDate(employee.apvDate)}${employee.apvExpiryDate ? `, förfaller ${formatDate(employee.apvExpiryDate)}` : ""}`
-                      : employee.skills.includes("APV")
-                        ? "APV"
-                        : null,
-                    employee.id06Date
-                      ? `ID06: utbildningsdatum ${formatDate(employee.id06Date)}${employee.id06ExpiryDate ? `, förfaller ${formatDate(employee.id06ExpiryDate)}` : ""}`
-                      : employee.skills.includes("ID06")
-                        ? "ID06"
-                        : null,
-                    employee.otherCompetence ? `Övrigt: ${employee.otherCompetence}` : null,
-                  ].filter(Boolean).join(" · ") || "Inga kompetenser angivna"}
-                </p>
+                <div className="employee-card-grid">
+                  <div className="employee-card-section">
+                    <p className="employee-card-label">Arbetslag</p>
+                    <p className="item-meta">{employee.team?.name || "Inget team"}</p>
+                  </div>
+                  <div className="employee-card-section">
+                    <p className="employee-card-label">Telefon</p>
+                    <p className="item-meta">{employee.phone || "Ingen telefon"}</p>
+                  </div>
+                  <div className="employee-card-section">
+                    <p className="employee-card-label">Personnummer</p>
+                    <p className="item-meta">{employee.personalNumber || "Inget personnummer"}</p>
+                  </div>
+                  <div className="employee-card-section">
+                    <p className="employee-card-label">E-post</p>
+                    <p className="item-meta">{employee.email || "Ingen e-post"}</p>
+                  </div>
+                </div>
+                <div className="employee-card-section">
+                  <p className="employee-card-label">Adress</p>
+                  <p className="item-meta">{[employee.address, employee.postalCode, employee.city].filter(Boolean).join(", ") || "Ingen adress"}</p>
+                </div>
+                <div className="employee-card-section">
+                  <p className="employee-card-label">Kompetenser</p>
+                  <div className="employee-tag-list">
+                    {formatEmployeeCompetences(employee).length > 0 ? (
+                      formatEmployeeCompetences(employee).map((competence) => (
+                        <span key={competence} className="employee-tag">{competence}</span>
+                      ))
+                    ) : (
+                      <span className="employee-tag employee-tag-muted">Inga kompetenser angivna</span>
+                    )}
+                  </div>
+                </div>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <Link href={`/admin?editEmployee=${employee.id}`}>
                     <button className="inline-flex min-h-11 items-center justify-center rounded-full border border-[rgba(27,43,49,0.14)] bg-transparent px-4 py-2 text-sm font-bold text-[#1b2b31] transition duration-150 hover:-translate-y-0.5 hover:bg-white/80" type="button">

@@ -444,6 +444,49 @@ button {
   border-radius: var(--radius-md);
 }
 
+.employee-card-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 0.6rem;
+}
+
+.employee-card-section {
+  margin-top: 0.6rem;
+}
+
+.employee-card-label {
+  margin: 0 0 0.18rem;
+  color: var(--accent-strong);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.employee-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.employee-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.42rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(15, 118, 110, 0.1);
+  color: var(--accent-strong);
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.employee-tag-muted {
+  background: rgba(20, 51, 58, 0.08);
+  color: var(--text-soft);
+}
+
 .empty-state {
   padding: 1rem;
   border-radius: var(--radius-md);
@@ -646,7 +689,8 @@ button {
   .hero-actions,
   .filters-layout,
   .field-row,
-  .directory-grid {
+  .directory-grid,
+  .employee-card-grid {
     grid-template-columns: 1fr;
     flex-direction: column;
   }
