@@ -37,7 +37,6 @@ export async function createSession(user: SessionUser) {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
-    domain: process.env.COOKIE_DOMAIN || undefined,
     path: "/",
     maxAge: 60 * 60 * 8,
   });
