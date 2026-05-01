@@ -5,6 +5,7 @@ import { requireUser } from "@/lib/auth";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ProjectCalendar } from "@/components/calendar/project-calendar";
+import { withBasePath } from "@/lib/base-path";
 import { formatDate, isActiveProjectStatus, weekNumber } from "@/lib/utils";
 
 function MetricCard({ label, value, subtext, accent = false }: { label: string; value: number; subtext?: string; accent?: boolean }) {
@@ -17,7 +18,8 @@ function MetricCard({ label, value, subtext, accent = false }: { label: string; 
   );
 }
 
-export default async function DashboardPage() {
+export default async function DashboardPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
+  const params = await searchParams;
   const user = await requireUser();
   const projects = await db.project.findMany({
     include: {
@@ -53,6 +55,8 @@ export default async function DashboardPage() {
   );
 
   const today = new Date();
+  const filterFrom = params.from || "";
+  const filterTo = params.to || "";
   const todaysProjects = myProjects.filter((project) => project.startDate <= today && project.endDate >= today);
   const upcomingProjects = myProjects.filter((project) => project.startDate >= today).slice(0, 5);
   const teamSummary = [
@@ -145,7 +149,7 @@ export default async function DashboardPage() {
               <CardTitle>Kalender</CardTitle>
             </div>
             <div className="toolbar-actions">
-              <span className="hero-meta-chip">Månad, vecka och dag</span>
+              <span className="hero-meta-chip">År, månad, vecka och dag</span>
               {user.role === "admin" ? (
                 <Link href="/projects/new">
                   <Button type="button">Lägg till projekt</Button>
@@ -287,6 +291,47 @@ export default async function DashboardPage() {
                 <Button variant="ghost" className="w-full justify-center" type="button">Skapa nytt projekt</Button>
               </Link>
             </div>
+          </Card>
+
+          <Card className="admin-card glass-card">
+            <div className="card-header">
+              <div>
+                <p className="eyebrow">Planering</p>
+                <CardTitle>Exportera planering</CardTitle>
+              </div>
+            </div>
+            <form method="get" className="grid gap-3">
+              <div className="grid gap-3 md:grid-cols-2">
+                <label className="grid gap-2">
+                  <span className="text-[0.85rem] font-bold text-[#59707a]">Från datum</span>
+                  <input
+                    className="min-h-11 rounded-[14px] border border-[rgba(27,43,49,0.12)] bg-[rgba(255,255,255,0.96)] px-3 py-2 text-[#1b2b31]"
+                    name="from"
+                    type="date"
+                    defaultValue={filterFrom}
+                  />
+                </label>
+                <label className="grid gap-2">
+                  <span className="text-[0.85rem] font-bold text-[#59707a]">Till datum</span>
+                  <input
+                    className="min-h-11 rounded-[14px] border border-[rgba(27,43,49,0.12)] bg-[rgba(255,255,255,0.96)] px-3 py-2 text-[#1b2b31]"
+                    name="to"
+                    type="date"
+                    defaultValue={filterTo}
+                  />
+                </label>
+              </div>
+              <p className="dashboard-note">Hämta en PDF med alla projekt som överlappar vald tidsperiod.</p>
+              <div className="flex flex-wrap gap-3">
+                <Button variant="secondary" type="submit">Visa period</Button>
+                <a
+                  className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#0f766e] px-4 py-2 text-sm font-bold text-white transition duration-150 hover:-translate-y-0.5 hover:bg-[#115e59]"
+                  href={withBasePath(`/api/exports/planning?from=${encodeURIComponent(filterFrom)}&to=${encodeURIComponent(filterTo)}`)}
+                >
+                  Ladda ned PDF
+                </a>
+              </div>
+            </form>
           </Card>
 
           <Card className="admin-card glass-card">
