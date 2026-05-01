@@ -4,6 +4,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
+import multiMonthPlugin from "@fullcalendar/multimonth";
 import interactionPlugin from "@fullcalendar/interaction";
 import type { EventDropArg } from "@fullcalendar/core";
 import { withBasePath } from "@/lib/base-path";
@@ -45,7 +46,7 @@ export function ProjectCalendar({ projects, canEdit }: { projects: CalendarProje
 
   return (
     <FullCalendar
-      plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
+      plugins={[dayGridPlugin, timeGridPlugin, listPlugin, multiMonthPlugin, interactionPlugin]}
       initialView="dayGridMonth"
       locale="sv"
       firstDay={1}
@@ -56,9 +57,14 @@ export function ProjectCalendar({ projects, canEdit }: { projects: CalendarProje
       headerToolbar={{
         left: "prev,next today",
         center: "title",
-        right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
+        right: "multiMonthYear,dayGridMonth,timeGridWeek,timeGridDay,listWeek",
       }}
-      buttonText={{ today: "Idag", month: "Månad", week: "Vecka", day: "Dag", list: "Lista" }}
+      buttonText={{ today: "Idag", year: "År", month: "Månad", week: "Vecka", day: "Dag", list: "Lista" }}
+      views={{
+        multiMonthYear: {
+          buttonText: "År",
+        },
+      }}
       events={projects.map((project) => ({
         id: project.id,
         title: `${project.title} · ${project.city}`,
