@@ -12,11 +12,12 @@ function formatDate(value: Date | null | undefined) {
 }
 
 function splitEmployeeName(name: string) {
-  const parts = name.trim().split(/\s+/).filter(Boolean);
+  const normalized = name.replace(/\//g, " ").trim();
+  const parts = normalized.split(/\s+/).filter(Boolean);
   if (parts.length <= 1) {
     return {
       firstName: parts[0] || "",
-      lastName: "",
+      lastName: parts[0] || "",
     };
   }
   return {
@@ -66,8 +67,10 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         email: editingEmployeeRaw.email || "",
         title: editingEmployeeRaw.title,
         teamId: editingEmployeeRaw.teamId || "",
+        hasApv: editingEmployeeRaw.apvDate !== null || editingEmployeeRaw.skills.includes("APV"),
         apvDate: formatDate(editingEmployeeRaw.apvDate),
         apvExpiryDate: formatDate(editingEmployeeRaw.apvExpiryDate),
+        hasId06: editingEmployeeRaw.id06Date !== null || editingEmployeeRaw.skills.includes("ID06"),
         id06Date: formatDate(editingEmployeeRaw.id06Date),
         id06ExpiryDate: formatDate(editingEmployeeRaw.id06ExpiryDate),
         otherCompetence: editingEmployeeRaw.otherCompetence || "",
@@ -139,10 +142,14 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
                   {[
                     employee.apvDate
                       ? `APV: utbildningsdatum ${formatDate(employee.apvDate)}${employee.apvExpiryDate ? `, förfaller ${formatDate(employee.apvExpiryDate)}` : ""}`
-                      : null,
+                      : employee.skills.includes("APV")
+                        ? "APV"
+                        : null,
                     employee.id06Date
                       ? `ID06: utbildningsdatum ${formatDate(employee.id06Date)}${employee.id06ExpiryDate ? `, förfaller ${formatDate(employee.id06ExpiryDate)}` : ""}`
-                      : null,
+                      : employee.skills.includes("ID06")
+                        ? "ID06"
+                        : null,
                     employee.otherCompetence ? `Övrigt: ${employee.otherCompetence}` : null,
                   ].filter(Boolean).join(" · ") || "Inga kompetenser angivna"}
                 </p>

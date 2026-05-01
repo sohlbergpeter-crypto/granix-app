@@ -29,8 +29,10 @@ type EditingEmployee = {
   email: string;
   title: string;
   teamId: string;
+  hasApv: boolean;
   apvDate: string;
   apvExpiryDate: string;
+  hasId06: boolean;
   id06Date: string;
   id06ExpiryDate: string;
   otherCompetence: string;
@@ -132,7 +134,7 @@ export function AdminForms({
             <p className="text-[0.85rem] font-bold text-[#59707a]">Kompetenser</p>
             <div className="field-row">
               <label className="flex items-center gap-2 text-[#1b2b31]">
-                <input name="hasApv" type="checkbox" defaultChecked={Boolean(editingEmployee?.apvDate)} />
+                <input name="hasApv" type="checkbox" defaultChecked={editingEmployee?.hasApv ?? false} />
                 <span>APV</span>
               </label>
               <Field label="Utbildningsdatum APV"><Input name="apvDate" type="date" defaultValue={editingEmployee?.apvDate || ""} /></Field>
@@ -140,7 +142,7 @@ export function AdminForms({
             </div>
             <div className="field-row">
               <label className="flex items-center gap-2 text-[#1b2b31]">
-                <input name="hasId06" type="checkbox" defaultChecked={Boolean(editingEmployee?.id06Date)} />
+                <input name="hasId06" type="checkbox" defaultChecked={editingEmployee?.hasId06 ?? false} />
                 <span>ID06</span>
               </label>
               <Field label="Utbildningsdatum ID06"><Input name="id06Date" type="date" defaultValue={editingEmployee?.id06Date || ""} /></Field>
