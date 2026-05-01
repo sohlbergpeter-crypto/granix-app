@@ -10,6 +10,30 @@ function buildEmployeeName(firstName: string, lastName: string) {
   return `${firstName.trim()} ${lastName.trim()}`.trim();
 }
 
+function employeeFormValues(formData: FormData) {
+  return {
+    id: String(formData.get("id") || ""),
+    firstName: String(formData.get("firstName") || ""),
+    lastName: String(formData.get("lastName") || ""),
+    personalNumber: String(formData.get("personalNumber") || ""),
+    address: String(formData.get("address") || ""),
+    postalCode: String(formData.get("postalCode") || ""),
+    city: String(formData.get("city") || ""),
+    phone: String(formData.get("phone") || ""),
+    email: String(formData.get("email") || ""),
+    title: String(formData.get("title") || ""),
+    teamId: String(formData.get("teamId") || ""),
+    hasApv: formData.get("hasApv") === "on",
+    apvDate: String(formData.get("apvDate") || ""),
+    apvExpiryDate: String(formData.get("apvExpiryDate") || ""),
+    hasId06: formData.get("hasId06") === "on",
+    id06Date: String(formData.get("id06Date") || ""),
+    id06Number: String(formData.get("id06Number") || ""),
+    id06ExpiryDate: String(formData.get("id06ExpiryDate") || ""),
+    otherCompetence: String(formData.get("otherCompetence") || ""),
+  };
+}
+
 export async function createUserAction(_: unknown, formData: FormData) {
   await requireAdmin();
   const parsed = userSchema.safeParse({
@@ -36,27 +60,9 @@ export async function createUserAction(_: unknown, formData: FormData) {
 
 export async function createEmployeeAction(_: unknown, formData: FormData) {
   await requireAdmin();
-  const parsed = employeeSchema.safeParse({
-    firstName: formData.get("firstName"),
-    lastName: formData.get("lastName"),
-    personalNumber: formData.get("personalNumber"),
-    address: formData.get("address"),
-    postalCode: formData.get("postalCode"),
-    city: formData.get("city"),
-    phone: formData.get("phone"),
-    email: formData.get("email"),
-    title: formData.get("title"),
-    teamId: formData.get("teamId"),
-    hasApv: formData.get("hasApv") === "on",
-    apvDate: formData.get("apvDate"),
-    apvExpiryDate: formData.get("apvExpiryDate"),
-    hasId06: formData.get("hasId06") === "on",
-    id06Date: formData.get("id06Date"),
-    id06Number: formData.get("id06Number"),
-    id06ExpiryDate: formData.get("id06ExpiryDate"),
-    otherCompetence: formData.get("otherCompetence"),
-  });
-  if (!parsed.success) return { error: parsed.error.errors[0]?.message || "Anställd kunde inte sparas." };
+  const submittedValues = employeeFormValues(formData);
+  const parsed = employeeSchema.safeParse(submittedValues);
+  if (!parsed.success) return { error: parsed.error.errors[0]?.message || "Anställd kunde inte sparas.", values: submittedValues };
 
   await db.employee.create({
     data: {
@@ -93,27 +99,9 @@ export async function updateEmployeeAction(_: unknown, formData: FormData) {
   const id = String(formData.get("id") || "");
   if (!id) return { error: "Ingen anställd angavs." };
 
-  const parsed = employeeSchema.safeParse({
-    firstName: formData.get("firstName"),
-    lastName: formData.get("lastName"),
-    personalNumber: formData.get("personalNumber"),
-    address: formData.get("address"),
-    postalCode: formData.get("postalCode"),
-    city: formData.get("city"),
-    phone: formData.get("phone"),
-    email: formData.get("email"),
-    title: formData.get("title"),
-    teamId: formData.get("teamId"),
-    hasApv: formData.get("hasApv") === "on",
-    apvDate: formData.get("apvDate"),
-    apvExpiryDate: formData.get("apvExpiryDate"),
-    hasId06: formData.get("hasId06") === "on",
-    id06Date: formData.get("id06Date"),
-    id06Number: formData.get("id06Number"),
-    id06ExpiryDate: formData.get("id06ExpiryDate"),
-    otherCompetence: formData.get("otherCompetence"),
-  });
-  if (!parsed.success) return { error: parsed.error.errors[0]?.message || "Anställd kunde inte uppdateras." };
+  const submittedValues = employeeFormValues(formData);
+  const parsed = employeeSchema.safeParse(submittedValues);
+  if (!parsed.success) return { error: parsed.error.errors[0]?.message || "Anställd kunde inte uppdateras.", values: submittedValues };
 
   await db.employee.update({
     where: { id },
