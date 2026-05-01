@@ -60,6 +60,8 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         lastName: splitName?.lastName || "",
         personalNumber: editingEmployeeRaw.personalNumber || "",
         address: editingEmployeeRaw.address || "",
+        postalCode: editingEmployeeRaw.postalCode || "",
+        city: editingEmployeeRaw.city || "",
         phone: editingEmployeeRaw.phone || "",
         email: editingEmployeeRaw.email || "",
         title: editingEmployeeRaw.title,
@@ -130,7 +132,9 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
                 </div>
                 <p className="item-meta">{employee.team?.name || "Inget team"} · {employee.phone || "Ingen telefon"}</p>
                 <p className="item-meta">{employee.personalNumber || "Inget personnummer"} · {employee.email || "Ingen e-post"}</p>
-                <p className="item-meta">{employee.address || "Ingen adress"}</p>
+                <p className="item-meta">
+                  {[employee.address, employee.postalCode, employee.city].filter(Boolean).join(", ") || "Ingen adress"}
+                </p>
                 <p className="item-meta">
                   {[
                     employee.apvDate

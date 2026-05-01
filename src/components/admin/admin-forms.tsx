@@ -23,6 +23,8 @@ type EditingEmployee = {
   lastName: string;
   personalNumber: string;
   address: string;
+  postalCode: string;
+  city: string;
   phone: string;
   email: string;
   title: string;
@@ -108,6 +110,10 @@ export function AdminForms({
           <div className="field-row">
             <Field label="Personnummer"><Input name="personalNumber" placeholder="19840324-6280" defaultValue={editingEmployee?.personalNumber || ""} required /></Field>
             <Field label="Adress"><Input name="address" defaultValue={editingEmployee?.address || ""} required /></Field>
+          </div>
+          <div className="field-row">
+            <Field label="Postnummer"><Input name="postalCode" placeholder="12345" defaultValue={editingEmployee?.postalCode || ""} required /></Field>
+            <Field label="Ort"><Input name="city" defaultValue={editingEmployee?.city || ""} required /></Field>
           </div>
           <div className="field-row">
             <Field label="Telefon"><Input name="phone" defaultValue={editingEmployee?.phone || ""} required /></Field>

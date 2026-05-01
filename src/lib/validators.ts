@@ -51,6 +51,8 @@ export const employeeSchema = z.object({
   lastName: z.string().trim().min(2, "Ange efternamn."),
   personalNumber: z.string().trim().regex(/^\d{8}-\d{4}$/, "Ange personnummer som YYYYMMDD-XXXX."),
   address: z.string().trim().min(2, "Ange adress."),
+  postalCode: z.string().trim().regex(/^\d{3}\s?\d{2}$/, "Ange postnummer som 12345 eller 123 45."),
+  city: z.string().trim().min(2, "Ange ort."),
   phone: z.string().trim().min(6, "Ange telefonnummer."),
   email: z.string().trim().email("Ange giltig e-post."),
   title: z.string().trim().min(2),

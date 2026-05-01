@@ -89,6 +89,8 @@ model Employee {
   name        String
   personalNumber String?
   address     String?
+  postalCode  String?
+  city        String?
   phone       String?
   email       String?
   title       String

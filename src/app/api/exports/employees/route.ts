@@ -52,7 +52,9 @@ export async function GET() {
     drawLine(employee.name, 13, true, rgb(0.07, 0.37, 0.35));
     drawLine(`Titel: ${employee.title}`, 10);
     if (employee.personalNumber) drawLine(`Personnummer: ${employee.personalNumber}`, 10);
-    if (employee.address) drawLine(`Adress: ${employee.address}`.slice(0, 130), 10);
+    if (employee.address || employee.postalCode || employee.city) {
+      drawLine(`Adress: ${[employee.address, employee.postalCode, employee.city].filter(Boolean).join(", ")}`.slice(0, 130), 10);
+    }
     if (employee.phone) drawLine(`Telefon: ${employee.phone}`, 10);
     if (employee.email) drawLine(`E-post: ${employee.email}`, 10);
     drawLine(`Arbetslag: ${employee.team?.name || "Inget arbetslag"}`, 10);
