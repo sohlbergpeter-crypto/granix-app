@@ -13,8 +13,10 @@ export default async function DiaryPage({ searchParams }: { searchParams: Promis
   const params = await searchParams;
   const from = parseDate(params.from);
   const to = parseDate(params.to, true);
-  const [projects, myEntriesRaw, allEntriesRaw] = await Promise.all([
+  const employeeId = params.employeeId || "";
+  const [projects, employees, myEntriesRaw, allEntriesRaw] = await Promise.all([
     db.project.findMany({ where: { status: { notIn: ["klart", "fakturerat", "installt"] } }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    user.role === "admin" ? db.employee.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }) : Promise.resolve([]),
     db.diaryEntry.findMany({
       where: user.employeeId ? { employeeId: user.employeeId } : { id: "__none__" },
       include: { project: true, employee: true },
@@ -23,6 +25,7 @@ export default async function DiaryPage({ searchParams }: { searchParams: Promis
     user.role === "admin"
       ? db.diaryEntry.findMany({
           where: {
+            ...(employeeId ? { employeeId } : {}),
             ...(from || to
               ? {
                   date: {
@@ -52,11 +55,13 @@ export default async function DiaryPage({ searchParams }: { searchParams: Promis
   return (
     <DiaryModule
       projects={projects}
+      employees={employees}
       myEntries={myEntriesRaw.map(mapEntry)}
       allEntries={allEntriesRaw.map(mapEntry)}
       isAdmin={user.role === "admin"}
       filterFrom={params.from || ""}
       filterTo={params.to || ""}
+      filterEmployeeId={employeeId}
     />
   );
 }

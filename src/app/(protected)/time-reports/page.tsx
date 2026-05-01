@@ -13,8 +13,10 @@ export default async function TimeReportsPage({ searchParams }: { searchParams: 
   const params = await searchParams;
   const from = parseDate(params.from);
   const to = parseDate(params.to, true);
-  const [projects, myReportsRaw, allReportsRaw] = await Promise.all([
+  const employeeId = params.employeeId || "";
+  const [projects, employees, myReportsRaw, allReportsRaw] = await Promise.all([
     db.project.findMany({ where: { status: { notIn: ["klart", "fakturerat", "installt"] } }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    user.role === "admin" ? db.employee.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }) : Promise.resolve([]),
     db.timeReport.findMany({
       where: user.employeeId ? { employeeId: user.employeeId } : { id: "__none__" },
       include: { project: true, employee: true },
@@ -23,6 +25,7 @@ export default async function TimeReportsPage({ searchParams }: { searchParams: 
     user.role === "admin"
       ? db.timeReport.findMany({
           where: {
+            ...(employeeId ? { employeeId } : {}),
             ...(from || to
               ? {
                   date: {
@@ -54,11 +57,13 @@ export default async function TimeReportsPage({ searchParams }: { searchParams: 
   return (
     <TimeReportModule
       projects={projects}
+      employees={employees}
       myReports={myReportsRaw.map(mapReport)}
       allReports={allReportsRaw.map(mapReport)}
       isAdmin={user.role === "admin"}
       filterFrom={params.from || ""}
       filterTo={params.to || ""}
+      filterEmployeeId={employeeId}
     />
   );
 }

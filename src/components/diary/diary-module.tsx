@@ -81,18 +81,22 @@ function DiaryCard({
 
 export function DiaryModule({
   projects,
+  employees,
   myEntries,
   allEntries,
   isAdmin,
   filterFrom,
   filterTo,
+  filterEmployeeId,
 }: {
   projects: Option[];
+  employees: Option[];
   myEntries: DiaryItem[];
   allEntries: DiaryItem[];
   isAdmin: boolean;
   filterFrom: string;
   filterTo: string;
+  filterEmployeeId: string;
 }) {
   const [state, action, pending] = useActionState(saveDiaryEntryAction, null);
   const [form, setForm] = useState<EditableDiary>(emptyForm);
@@ -252,7 +256,7 @@ export function DiaryModule({
               </div>
             </div>
             <form className="planning-form mb-4">
-              <div className="field-row">
+              <div className="directory-grid">
                 <label className="field">
                   <span>Från datum</span>
                   <input name="from" type="date" defaultValue={filterFrom} />
@@ -261,12 +265,19 @@ export function DiaryModule({
                   <span>Till datum</span>
                   <input name="to" type="date" defaultValue={filterTo} />
                 </label>
+                <label className="field">
+                  <span>Anställd</span>
+                  <select name="employeeId" defaultValue={filterEmployeeId}>
+                    <option value="">Alla anställda</option>
+                    {employees.map((employee) => <option key={employee.id} value={employee.id}>{employee.name}</option>)}
+                  </select>
+                </label>
               </div>
               <div className="flex flex-wrap gap-3">
                 <button className="secondary-button" type="submit">Visa period</button>
                 <Link
                   className="ghost-button"
-                  href={withBasePath(`/api/exports/diary?from=${encodeURIComponent(filterFrom)}&to=${encodeURIComponent(filterTo)}`)}
+                  href={withBasePath(`/api/exports/diary?from=${encodeURIComponent(filterFrom)}&to=${encodeURIComponent(filterTo)}&employeeId=${encodeURIComponent(filterEmployeeId)}`)}
                 >
                   Ladda ned sammanställning
                 </Link>
