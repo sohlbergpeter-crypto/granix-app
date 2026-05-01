@@ -10,35 +10,46 @@ function values(formData: FormData, key: string) {
   return formData.getAll(key).map(String).filter(Boolean);
 }
 
-export async function saveProjectAction(_: unknown, formData: FormData) {
-  const user = await requireAdmin();
-  const parsed = projectSchema.safeParse({
-    id: formData.get("id") || undefined,
-    name: formData.get("name"),
-    projectNumber: formData.get("projectNumber"),
-    customerName: formData.get("customerName"),
-    address: formData.get("address"),
-    city: formData.get("city"),
-    contactPerson: formData.get("contactPerson"),
-    phone: formData.get("phone"),
-    startDate: formData.get("startDate"),
-    endDate: formData.get("endDate"),
-    startTime: formData.get("startTime"),
-    endTime: formData.get("endTime"),
+function projectFormValues(formData: FormData) {
+  return {
+    id: String(formData.get("id") || ""),
+    name: String(formData.get("name") || ""),
+    projectNumber: String(formData.get("projectNumber") || ""),
+    customerName: String(formData.get("customerName") || ""),
+    address: String(formData.get("address") || ""),
+    city: String(formData.get("city") || ""),
+    contactPerson: String(formData.get("contactPerson") || ""),
+    phone: String(formData.get("phone") || ""),
+    startDate: String(formData.get("startDate") || ""),
+    endDate: String(formData.get("endDate") || ""),
+    startTime: String(formData.get("startTime") || ""),
+    endTime: String(formData.get("endTime") || ""),
     allDay: formData.get("allDay") === "on",
-    status: formData.get("status"),
-    color: formData.get("color"),
-    internalNote: formData.get("internalNote"),
-    externalDescription: formData.get("externalDescription"),
-    teamId: formData.get("teamId"),
+    status: String(formData.get("status") || "planerat"),
+    color: String(formData.get("color") || "#0f766e"),
+    internalNote: String(formData.get("internalNote") || ""),
+    externalDescription: String(formData.get("externalDescription") || ""),
+    teamId: String(formData.get("teamId") || ""),
     employeeIds: values(formData, "employeeIds"),
     machineIds: values(formData, "machineIds"),
     vehicleIds: values(formData, "vehicleIds"),
-    notificationTarget: formData.get("notificationTarget") || "none",
+    notificationTarget: String(formData.get("notificationTarget") || "none"),
+  };
+}
+
+export async function saveProjectAction(_: unknown, formData: FormData) {
+  const user = await requireAdmin();
+  const submittedValues = projectFormValues(formData);
+
+  const parsed = projectSchema.safeParse({
+    ...submittedValues,
   });
 
   if (!parsed.success) {
-    return { error: parsed.error.errors[0]?.message || "Projektet kunde inte sparas." };
+    return {
+      error: parsed.error.errors[0]?.message || "Projektet kunde inte sparas.",
+      values: submittedValues,
+    };
   }
 
   const { employeeIds, machineIds, vehicleIds, notificationTarget, id, ...data } = parsed.data;

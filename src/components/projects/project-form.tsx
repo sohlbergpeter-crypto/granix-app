@@ -1,7 +1,7 @@
 "use client";
 
 import { ProjectStatus } from "@prisma/client";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { saveProjectAction } from "@/server/actions/projects";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
@@ -9,6 +9,36 @@ import { Field, Input, Select, Textarea } from "@/components/ui/field";
 
 type Option = { id: string; name: string };
 type NotificationTarget = "none" | "assigned" | "all";
+type ProjectFormValues = {
+  id?: string;
+  name?: string;
+  projectNumber?: string;
+  customerName?: string;
+  address?: string;
+  city?: string;
+  contactPerson?: string;
+  phone?: string;
+  startDate?: string;
+  endDate?: string;
+  startTime?: string;
+  endTime?: string;
+  allDay?: boolean;
+  status?: string;
+  color?: string;
+  internalNote?: string;
+  externalDescription?: string;
+  teamId?: string;
+  employeeIds?: string[];
+  machineIds?: string[];
+  vehicleIds?: string[];
+  notificationTarget?: string;
+};
+type ProjectActionState =
+  | {
+      error?: string;
+      values?: ProjectFormValues;
+    }
+  | null;
 
 type ProjectFormProps = {
   project?: {
@@ -102,8 +132,23 @@ function valuesFromSelect(event: React.ChangeEvent<HTMLSelectElement>) {
 }
 
 export function ProjectForm({ project, teams, employees, machines, vehicles }: ProjectFormProps) {
-  const [state, action, pending] = useActionState(saveProjectAction, null);
+  const [state, action, pending] = useActionState<ProjectActionState, FormData>(saveProjectAction, null);
   const [draft, setDraft] = useState<ProjectDraft>(() => getInitialDraft(project));
+
+  useEffect(() => {
+    const values = state?.values;
+    if (!values) return;
+    setDraft((current) => ({
+      ...current,
+      ...values,
+      allDay: values.allDay ?? current.allDay,
+      employeeIds: values.employeeIds ?? current.employeeIds,
+      machineIds: values.machineIds ?? current.machineIds,
+      vehicleIds: values.vehicleIds ?? current.vehicleIds,
+      notificationTarget: (values.notificationTarget as NotificationTarget | undefined) ?? current.notificationTarget,
+      status: (values.status as ProjectStatus | undefined) ?? current.status,
+    }));
+  }, [state]);
 
   return (
     <Card className="glass-card p-5">
