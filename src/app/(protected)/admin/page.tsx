@@ -104,6 +104,11 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         city: editingEmployeeRaw.city || "",
         phone: editingEmployeeRaw.phone || "",
         email: editingEmployeeRaw.email || "",
+        clothingSizeTop: editingEmployeeRaw.clothingSizeTop || "",
+        clothingSizePants: editingEmployeeRaw.clothingSizePants || "",
+        clothingSizeShoes: editingEmployeeRaw.clothingSizeShoes || "",
+        nextOfKinName: editingEmployeeRaw.nextOfKinName || "",
+        nextOfKinPhone: editingEmployeeRaw.nextOfKinPhone || "",
         title: editingEmployeeRaw.title,
         teamId: editingEmployeeRaw.teamId || "",
         hasApv: editingEmployeeRaw.apvDate !== null || editingEmployeeRaw.skills.includes("APV"),
@@ -190,7 +195,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         <Card className="glass-card">
           <div className="mb-4">
             <p className="eyebrow">Katalog</p>
-            <CardTitle>Anställda</CardTitle>
+            <CardTitle>Personal</CardTitle>
           </div>
           <div className="directory-list">
             {employees.map((employee) => (
@@ -220,6 +225,24 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
                 <div className="employee-card-section">
                   <p className="employee-card-label">Adress</p>
                   <p className="item-meta">{[employee.address, employee.postalCode, employee.city].filter(Boolean).join(", ") || "Ingen adress"}</p>
+                </div>
+                <div className="employee-card-grid">
+                  <div className="employee-card-section">
+                    <p className="employee-card-label">Kläder</p>
+                    <p className="item-meta">
+                      {[
+                        employee.clothingSizeTop ? `Tröja/jacka ${employee.clothingSizeTop}` : null,
+                        employee.clothingSizePants ? `Byxa ${employee.clothingSizePants}` : null,
+                        employee.clothingSizeShoes ? `Skor ${employee.clothingSizeShoes}` : null,
+                      ].filter(Boolean).join(" · ") || "Inga storlekar angivna"}
+                    </p>
+                  </div>
+                  <div className="employee-card-section">
+                    <p className="employee-card-label">Närmast anhörig</p>
+                    <p className="item-meta">
+                      {[employee.nextOfKinName, employee.nextOfKinPhone].filter(Boolean).join(" · ") || "Ingen anhörig angiven"}
+                    </p>
+                  </div>
                 </div>
                 <div className="employee-card-section">
                   <p className="employee-card-label">Kompetenser</p>

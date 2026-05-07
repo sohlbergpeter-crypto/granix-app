@@ -57,6 +57,19 @@ export async function GET() {
     }
     if (employee.phone) drawLine(`Telefon: ${employee.phone}`, 10);
     if (employee.email) drawLine(`E-post: ${employee.email}`, 10);
+    if (employee.clothingSizeTop || employee.clothingSizePants || employee.clothingSizeShoes) {
+      drawLine(
+        `Klädstorlekar: ${[
+          employee.clothingSizeTop ? `Tröja/jacka ${employee.clothingSizeTop}` : null,
+          employee.clothingSizePants ? `Byxa ${employee.clothingSizePants}` : null,
+          employee.clothingSizeShoes ? `Skor ${employee.clothingSizeShoes}` : null,
+        ].filter(Boolean).join(", ")}`.slice(0, 130),
+        10,
+      );
+    }
+    if (employee.nextOfKinName || employee.nextOfKinPhone) {
+      drawLine(`Närmast anhörig: ${[employee.nextOfKinName, employee.nextOfKinPhone].filter(Boolean).join(", ")}`.slice(0, 130), 10);
+    }
     drawLine(`Arbetslag: ${employee.team?.name || "Inget arbetslag"}`, 10);
     if (employee.apvDate) {
       drawLine(

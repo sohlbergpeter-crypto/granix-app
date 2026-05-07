@@ -47,6 +47,11 @@ type EditingEmployee = {
   city: string;
   phone: string;
   email: string;
+  clothingSizeTop: string;
+  clothingSizePants: string;
+  clothingSizeShoes: string;
+  nextOfKinName: string;
+  nextOfKinPhone: string;
   title: string;
   teamId: string;
   hasApv: boolean;
@@ -87,6 +92,11 @@ function getInitialEmployeeDraft(editingEmployee?: EditingEmployee | null): Empl
     city: "",
     phone: "",
     email: "",
+    clothingSizeTop: "",
+    clothingSizePants: "",
+    clothingSizeShoes: "",
+    nextOfKinName: "",
+    nextOfKinPhone: "",
     title: "",
     teamId: "",
     hasApv: false,
@@ -217,6 +227,18 @@ export function AdminForms({
           <div className="field-row">
             <Field label="Telefon"><Input name="phone" value={employeeDraft.phone} onChange={(event) => setEmployeeDraft((current) => ({ ...current, phone: event.target.value }))} required /></Field>
             <Field label="E-post"><Input name="email" type="email" value={employeeDraft.email} onChange={(event) => setEmployeeDraft((current) => ({ ...current, email: event.target.value }))} required /></Field>
+          </div>
+          <div className="grid gap-3 rounded-[20px] border border-[rgba(27,43,49,0.1)] bg-[rgba(255,255,255,0.72)] p-4">
+            <p className="text-[0.85rem] font-bold text-[#59707a]">Personal</p>
+            <div className="field-row">
+              <Field label="Storlek tröja eller jacka"><Input name="clothingSizeTop" value={employeeDraft.clothingSizeTop} onChange={(event) => setEmployeeDraft((current) => ({ ...current, clothingSizeTop: event.target.value }))} /></Field>
+              <Field label="Storlek byxa"><Input name="clothingSizePants" value={employeeDraft.clothingSizePants} onChange={(event) => setEmployeeDraft((current) => ({ ...current, clothingSizePants: event.target.value }))} /></Field>
+            </div>
+            <div className="field-row">
+              <Field label="Storlek skor"><Input name="clothingSizeShoes" value={employeeDraft.clothingSizeShoes} onChange={(event) => setEmployeeDraft((current) => ({ ...current, clothingSizeShoes: event.target.value }))} /></Field>
+              <Field label="Närmast anhörig"><Input name="nextOfKinName" value={employeeDraft.nextOfKinName} onChange={(event) => setEmployeeDraft((current) => ({ ...current, nextOfKinName: event.target.value }))} /></Field>
+            </div>
+            <Field label="Telefon närmast anhörig"><Input name="nextOfKinPhone" value={employeeDraft.nextOfKinPhone} onChange={(event) => setEmployeeDraft((current) => ({ ...current, nextOfKinPhone: event.target.value }))} /></Field>
           </div>
           <div className="field-row">
             <Field label="Roll eller titel"><Input name="title" placeholder="Stensättare" value={employeeDraft.title} onChange={(event) => setEmployeeDraft((current) => ({ ...current, title: event.target.value }))} required /></Field>

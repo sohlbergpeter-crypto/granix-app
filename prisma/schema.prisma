@@ -93,6 +93,11 @@ model Employee {
   city        String?
   phone       String?
   email       String?
+  clothingSizeTop String?
+  clothingSizePants String?
+  clothingSizeShoes String?
+  nextOfKinName String?
+  nextOfKinPhone String?
   title       String
   skills      String[]          @default([])
   apvDate     DateTime?
